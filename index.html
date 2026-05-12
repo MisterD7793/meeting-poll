@@ -273,11 +273,45 @@
 const SUPABASE_URL = 'https://eqpqtswfkfmukzuhenjt.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcHF0c3dma2ZtdWt6dWhlbmp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1OTgwNzUsImV4cCI6MjA5NDE3NDA3NX0.jk1dbvSxwoSiOFFA7CeNJbJItXmJeDebU2D9rGtfvVA';
 
+function getTZOffset(tz) {
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false
+  }).formatToParts(now);
+  const p = {};
+  parts.forEach(({ type, value }) => { if (type !== 'literal') p[type] = +value; });
+  const h = p.hour === 24 ? 0 : p.hour;
+  return (Date.UTC(p.year, p.month - 1, p.day, h, p.minute) - now.getTime()) / 60000;
+}
+
+function fmtRange(sMin, eMin) {
+  const norm = m => ((m % 1440) + 1440) % 1440;
+  const s = norm(sMin), e = norm(eMin);
+  const sh = Math.floor(s / 60), sm = s % 60;
+  const eh = Math.floor(e / 60), em = e % 60;
+  const ap = h => h < 12 ? 'am' : 'pm';
+  const h12 = h => (h % 12) || 12;
+  const fmt = (h, m) => m ? `${h12(h)}:${String(m).padStart(2, '0')}` : `${h12(h)}`;
+  const sStr = fmt(sh, sm), eStr = fmt(eh, em);
+  if (ap(sh) === ap(eh)) return `${sStr}–${eStr} ${ap(eh)}`;
+  return `${sStr} ${ap(sh)}–${eStr} ${ap(eh)}`;
+}
+
+function slotTime(sET, eET) {
+  return `${fmtRange(sET * 60 + TZ_DIFF_MINS, eET * 60 + TZ_DIFF_MINS)} ${TZ_ABBR}`;
+}
+
+const USER_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const TZ_ABBR = new Intl.DateTimeFormat('en-US', { timeZone: USER_TZ, timeZoneName: 'short' })
+  .formatToParts(new Date()).find(p => p.type === 'timeZoneName')?.value || '';
+const TZ_DIFF_MINS = Math.round(getTZOffset(USER_TZ) - getTZOffset('America/New_York'));
+
 const SLOTS = [
-  { id: 'morning',    name: 'Morning',              time: '9–11 am' },
-  { id: 'early_aftn', name: 'Early Afternoon',      time: '12–3 pm' },
-  { id: 'afternoon',  name: 'Afternoon',            time: '3–6 pm' },
-  { id: 'evening',    name: 'Evening / After Dinner', time: '8–10 pm' },
+  { id: 'morning',    name: 'Morning',                 time: slotTime(9,  11) },
+  { id: 'early_aftn', name: 'Early Afternoon',         time: slotTime(12, 15) },
+  { id: 'afternoon',  name: 'Afternoon',               time: slotTime(15, 18) },
+  { id: 'evening',    name: 'Evening / After Dinner',  time: slotTime(20, 22) },
 ];
 
 const DAYS = [

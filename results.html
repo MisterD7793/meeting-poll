@@ -502,8 +502,7 @@ function render(rows) {
       if (c.sometimes) parts.push(`${c.sometimes}~`);
       if (c.never)     parts.push(`${c.never}✗`);
       const countStr = parts.length ? parts.join(' · ') : (total ? 'none' : '');
-      const clickable = total > 0 ? `onclick="openPopup('${k}')"` : '';
-      return `<td><div class="cell ${cls}" ${clickable}>
+      return `<td><div class="cell ${cls}" onclick="openPopup('${k}')">
         <div class="cell-score">${scoreStr}</div>
         <div class="cell-counts">${countStr}</div>
       </div></td>`;
@@ -541,9 +540,10 @@ function openPopup(k) {
     c[bucket]++; n[bucket].push(row.name);
   });
 
-  const [dayId, ...slotParts] = k.split('_'); const slotId = slotParts.join('_');
+  const idx = k.indexOf("_"); const dayId = k.substring(0, idx); const slotId = k.substring(idx + 1);
   const day  = DAYS.find(d => d.id === dayId);
   const slot = SLOTS.find(s => s.id === slotId);
+  if (!day || !slot) { console.error("Unknown key:", k, dayId, slotId); return; }
   const s = Math.round(calcScore(c, total));
 
   document.getElementById('popup-title').textContent = `${day.label} · ${slot.name}`;

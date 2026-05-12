@@ -541,7 +541,7 @@ function openPopup(k) {
     c[bucket]++; n[bucket].push(row.name);
   });
 
-  const [dayId, slotId] = k.split(/_(?=[^_]+$)/);
+  const [dayId, ...slotParts] = k.split('_'); const slotId = slotParts.join('_');
   const day  = DAYS.find(d => d.id === dayId);
   const slot = SLOTS.find(s => s.id === slotId);
   const s = Math.round(calcScore(c, total));

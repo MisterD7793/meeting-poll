@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When Can We Meet?</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --border: #E2DDD6;
+    --text: #1A1714;
+    --muted: #7A736B;
+    --always: #2D6A4F;
+    --always-bg: #D8F3DC;
+    --always-border: #95D5A8;
+    --sometimes: #B5700A;
+    --sometimes-bg: #FFF0D6;
+    --sometimes-border: #FFCC7A;
+    --never: #9B2C2C;
+    --never-bg: #FDE8E8;
+    --never-border: #F9AAAA;
+    --unset: #E9E5DF;
+    --unset-border: #CEC8BF;
+    --accent: #2C4A7C;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .container { max-width: 720px; margin: 0 auto; }
+
+  header { margin-bottom: 2.5rem; }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+  header p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .name-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .name-section label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+  .name-section input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .name-section input:focus { border-color: var(--accent); }
+  .name-section input::placeholder { color: var(--muted); }
+
+  .legend {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .day-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .day-header {
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .day-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+  .day-quick {
+    display: flex;
+    gap: 6px;
+  }
+  .day-quick button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .day-quick button:hover { border-color: var(--accent); color: var(--accent); }
+
+  .slots { padding: 0.75rem 1.5rem 1rem; display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .slot {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .slot-label {
+    width: 200px;
+    flex-shrink: 0;
+  }
+  .slot-name {
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+  }
+  .slot-time {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .options {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .opt {
+    flex: 1;
+    padding: 7px 6px;
+    border-radius: 7px;
+    border: 1px solid var(--unset-border);
+    background: var(--unset);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .opt:hover { border-color: var(--accent); color: var(--accent); }
+
+  .opt.always   { background: var(--always-bg);    border-color: var(--always-border);    color: var(--always); }
+  .opt.sometimes{ background: var(--sometimes-bg); border-color: var(--sometimes-border); color: var(--sometimes); }
+  .opt.never    { background: var(--never-bg);     border-color: var(--never-border);     color: var(--never); }
+
+  .submit-section { margin-top: 2rem; }
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .submit-btn:hover { opacity: 0.88; }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .error-msg {
+    margin-top: 0.75rem;
+    color: var(--never);
+    font-size: 14px;
+    text-align: center;
+    min-height: 20px;
+  }
+
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  .success-screen h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+  }
+  .success-screen p { color: var(--muted); font-size: 15px; }
+  .checkmark {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div id="form-view">
+    <header>
+      <h1>When can you meet?</h1>
+      <p>Mark each time window as <strong>Always</strong>, <strong>Sometimes</strong>, or <strong>Never</strong> available for a recurring weekly meeting. Leave blank if you're unsure.</p>
+    </header>
+
+    <div class="name-section">
+      <label for="name-input">Your name</label>
+      <input type="text" id="name-input" placeholder="First name is fine" autocomplete="off" />
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#95D5A8"></div> Always free</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#FFCC7A"></div> Sometimes free</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#F9AAAA"></div> Never free</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#CEC8BF"></div> Not answered</div>
+    </div>
+
+    <div id="days-container"></div>
+
+    <div class="submit-section">
+      <button class="submit-btn" id="submit-btn">Submit my availability</button>
+      <div class="error-msg" id="error-msg"></div>
+    </div>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <span class="checkmark">✓</span>
+    <h2>Thanks, you're in.</h2>
+    <p>Your availability has been recorded.<br>We'll be in touch once everyone has responded.</p>
+  </div>
+
+</div>
+
+<script>
+const SUPABASE_URL = 'https://eqpqtswfkfmukzuhenjt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcHF0c3dma2ZtdWt6dWhlbmp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1OTgwNzUsImV4cCI6MjA5NDE3NDA3NX0.jk1dbvSxwoSiOFFA7CeNJbJItXmJeDebU2D9rGtfvVA';
+
+const SLOTS = [
+  { id: 'morning',    name: 'Morning',              time: '9–11 am' },
+  { id: 'early_aftn', name: 'Early Afternoon',      time: '12–3 pm' },
+  { id: 'afternoon',  name: 'Afternoon',            time: '3–6 pm' },
+  { id: 'evening',    name: 'Evening / After Dinner', time: '8–10 pm' },
+];
+
+const DAYS = [
+  { id: 'sun', label: 'Sunday',    slots: ['morning','early_aftn','afternoon','evening'] },
+  { id: 'mon', label: 'Monday',    slots: ['morning','early_aftn','afternoon','evening'] },
+  { id: 'tue', label: 'Tuesday',   slots: ['morning','early_aftn','afternoon','evening'] },
+  { id: 'wed', label: 'Wednesday', slots: ['morning','early_aftn','afternoon','evening'] },
+  { id: 'thu', label: 'Thursday',  slots: ['morning','early_aftn','afternoon','evening'] },
+  { id: 'fri', label: 'Friday',    slots: ['morning','early_aftn'] },
+];
+
+const OPTIONS = ['always','sometimes','never'];
+const state = {};
+
+function windowId(dayId, slotId) { return `${dayId}_${slotId}`; }
+
+function buildForm() {
+  const container = document.getElementById('days-container');
+  DAYS.forEach(day => {
+    const block = document.createElement('div');
+    block.className = 'day-block';
+
+    const header = document.createElement('div');
+    header.className = 'day-header';
+    header.innerHTML = `<h2>${day.label}</h2>
+      <div class="day-quick">
+        <button onclick="setDay('${day.id}','always')">All always</button>
+        <button onclick="setDay('${day.id}','never')">All never</button>
+      </div>`;
+    block.appendChild(header);
+
+    const slots = document.createElement('div');
+    slots.className = 'slots';
+
+    day.slots.forEach(slotId => {
+      const slot = SLOTS.find(s => s.id === slotId);
+      const wid = windowId(day.id, slotId);
+      state[wid] = null;
+
+      const row = document.createElement('div');
+      row.className = 'slot';
+      row.innerHTML = `
+        <div class="slot-label">
+          <span class="slot-name">${slot.name}</span>
+          <span class="slot-time">${slot.time}</span>
+        </div>
+        <div class="options" id="opts-${wid}">
+          ${OPTIONS.map(o => `<button class="opt" data-wid="${wid}" data-val="${o}" onclick="select('${wid}','${o}')">${capitalize(o)}</button>`).join('')}
+        </div>`;
+      slots.appendChild(row);
+    });
+
+    block.appendChild(slots);
+    container.appendChild(block);
+  });
+}
+
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function select(wid, val) {
+  if (state[wid] === val) {
+    state[wid] = null;
+    val = null;
+  } else {
+    state[wid] = val;
+  }
+  const opts = document.querySelectorAll(`#opts-${wid} .opt`);
+  opts.forEach(btn => {
+    btn.classList.remove('always','sometimes','never');
+    if (val && btn.dataset.val === val) btn.classList.add(val);
+  });
+}
+
+function setDay(dayId, val) {
+  const day = DAYS.find(d => d.id === dayId);
+  day.slots.forEach(slotId => select(windowId(dayId, slotId), val));
+}
+
+document.getElementById('submit-btn').addEventListener('click', async () => {
+  const name = document.getElementById('name-input').value.trim();
+  const errEl = document.getElementById('error-msg');
+  errEl.textContent = '';
+
+  if (!name) { errEl.textContent = 'Please enter your name before submitting.'; return; }
+
+  const answered = Object.values(state).filter(v => v !== null).length;
+  if (answered === 0) { errEl.textContent = 'Please fill in at least one time window.'; return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/responses`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ name, availability: state })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    document.getElementById('form-view').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+  } catch(e) {
+    errEl.textContent = 'Something went wrong. Please try again.';
+    btn.disabled = false;
+    btn.textContent = 'Submit my availability';
+  }
+});
+
+buildForm();
+</script>
+</body>
+</html>

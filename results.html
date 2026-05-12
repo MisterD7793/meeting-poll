@@ -32,9 +32,8 @@
     min-height: 100vh;
     padding: 2.5rem 1.5rem 4rem;
   }
-  .container { max-width: 860px; margin: 0 auto; }
+  .container { max-width: 960px; margin: 0 auto; }
 
-  /* Login */
   .login-wrap {
     min-height: 100vh;
     display: flex;
@@ -88,16 +87,22 @@
   .login-btn:hover { opacity: 0.85; }
   .login-error { color: var(--never); font-size: 13px; margin-top: 0.5rem; min-height: 18px; }
 
-  /* Dashboard */
   #dashboard { display: none; }
-  header { margin-bottom: 2rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-  header h1 {
+
+  .dash-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .dash-header h1 {
     font-family: 'DM Serif Display', serif;
     font-size: 2rem;
     font-weight: 400;
-    line-height: 1.2;
   }
-  header p { color: var(--muted); font-size: 14px; margin-top: 0.25rem; }
+  .dash-header p { color: var(--muted); font-size: 14px; margin-top: 0.25rem; }
   .refresh-btn {
     padding: 8px 16px;
     border: 1px solid var(--border);
@@ -109,11 +114,9 @@
     color: var(--muted);
     transition: all 0.15s;
     white-space: nowrap;
-    flex-shrink: 0;
   }
   .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* Stats row */
   .stats-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -129,162 +132,201 @@
   .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
   .stat-value { font-size: 22px; font-weight: 500; }
 
-  /* Top picks */
   .section-title {
     font-family: 'DM Serif Display', serif;
     font-size: 1.2rem;
     font-weight: 400;
     margin-bottom: 0.75rem;
   }
-  .top-picks {
+  .legend {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 2rem;
-  }
-  .pick-row {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.9rem 1.25rem;
-    display: flex;
-    align-items: center;
     gap: 1rem;
-  }
-  .pick-row.gold { border-color: #FFCC7A; background: #FFFBF0; }
-  .pick-rank {
-    font-size: 13px;
-    font-weight: 500;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+    font-size: 12px;
     color: var(--muted);
-    width: 24px;
-    flex-shrink: 0;
-    text-align: center;
   }
-  .pick-rank.first { color: #B5700A; font-size: 16px; }
-  .pick-name {
-    flex: 1;
-  }
-  .pick-name strong { font-size: 15px; font-weight: 500; display: block; }
-  .pick-name span { font-size: 12px; color: var(--muted); }
-  .pick-score {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--accent);
-    background: var(--accent-bg);
-    padding: 3px 10px;
-    border-radius: 20px;
-    white-space: nowrap;
-  }
-  .pick-bars {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-  }
-  .pick-bar {
-    height: 20px;
-    border-radius: 3px;
-    min-width: 4px;
-    font-size: 10px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 500;
-    padding: 0 4px;
-  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 
-  /* Full grid */
-  .grid-section { margin-bottom: 2rem; }
-  .day-block {
+  .grid-wrap {
+    overflow-x: auto;
+    margin-bottom: 2.5rem;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    margin-bottom: 1rem;
-    overflow: hidden;
   }
-  .day-header {
-    padding: 0.65rem 1.25rem;
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 13px;
     border-bottom: 1px solid var(--border);
-    font-family: 'DM Serif Display', serif;
-    font-size: 1rem;
-    font-weight: 400;
-  }
-  .slot-rows { padding: 0.5rem 1.25rem 0.75rem; display: flex; flex-direction: column; gap: 6px; }
-  .slot-result-row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .slot-result-label {
-    width: 180px;
-    flex-shrink: 0;
-  }
-  .slot-result-label strong { font-size: 13px; font-weight: 500; display: block; }
-  .slot-result-label span { font-size: 11px; color: var(--muted); }
-  .bar-track {
-    flex: 1;
-    height: 22px;
-    border-radius: 5px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    overflow: hidden;
-    display: flex;
-  }
-  .bar-seg {
-    height: 100%;
-    transition: width 0.4s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.9);
-    min-width: 0;
-    overflow: hidden;
-  }
-  .bar-always   { background: #52B788; }
-  .bar-sometimes{ background: #F4A621; }
-  .bar-never    { background: #E07070; }
-  .bar-blank    { background: var(--border); }
-  .slot-score-pill {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 20px;
     white-space: nowrap;
-    width: 52px;
+  }
+  thead th:first-child {
+    text-align: left;
+    padding-left: 1.25rem;
+    width: 145px;
+  }
+  tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
+  tbody td {
+    padding: 6px 4px;
+    vertical-align: middle;
     text-align: center;
   }
-  .pill-high   { background: var(--always-bg);    color: var(--always);    border: 1px solid var(--always-border); }
-  .pill-mid    { background: var(--sometimes-bg); color: var(--sometimes); border: 1px solid var(--sometimes-border); }
-  .pill-low    { background: var(--never-bg);     color: var(--never);     border: 1px solid var(--never-border); }
-  .pill-zero   { background: var(--bg);           color: var(--muted);     border: 1px solid var(--border); }
-
-  /* Respondents */
-  .respondents-section { margin-bottom: 2rem; }
-  .respondents-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  tbody td:first-child {
+    text-align: left;
+    padding-left: 1.25rem;
+    font-weight: 500;
+    font-size: 13px;
+    white-space: nowrap;
   }
-  .respondent-chip {
+  tbody td:first-child span {
+    display: block;
+    font-weight: 400;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .cell {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 88px;
+    border-radius: 8px;
+    padding: 7px 4px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    border: 1px solid transparent;
+  }
+  .cell:hover { transform: scale(1.05); }
+  .cell.na, .cell.empty { background: var(--bg); border-color: var(--border); cursor: default; }
+  .cell.na:hover, .cell.empty:hover { transform: none; }
+  .cell.high     { background: #D8F3DC; border-color: #95D5A8; }
+  .cell.mid      { background: #FFF0D6; border-color: #FFCC7A; }
+  .cell.low      { background: #FDE8E8; border-color: #F9AAAA; }
+  .cell.zero     { background: var(--bg); border-color: var(--border); }
+
+  .cell-score { font-size: 16px; font-weight: 500; line-height: 1; }
+  .cell.high .cell-score   { color: #2D6A4F; }
+  .cell.mid .cell-score    { color: #B5700A; }
+  .cell.low .cell-score    { color: #9B2C2C; }
+  .cell.zero .cell-score   { color: var(--muted); }
+  .cell.na .cell-score     { color: var(--muted); }
+
+  .cell-counts {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  /* Popup */
+  .popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,23,20,0.3);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .popup-overlay.open { display: flex; }
+  .popup {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 5px 14px;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    border-radius: 14px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
   }
-  .respondent-chip .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #52B788;
-    flex-shrink: 0;
+  .popup-close {
+    position: absolute;
+    top: 0.9rem; right: 0.9rem;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--muted);
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .popup-close:hover { background: var(--bg); }
+  .popup-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    margin-bottom: 0.2rem;
+  }
+  .popup-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
+
+  .popup-score-bar {
+    display: flex;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+  }
+  .psb-always    { background: #52B788; }
+  .psb-sometimes { background: #F4A621; }
+  .psb-never     { background: #E07070; }
+  .psb-blank     { background: var(--border); }
+
+  .popup-group { margin-bottom: 1rem; }
+  .popup-group:last-child { margin-bottom: 0; }
+  .popup-group-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 0.5rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .lbl-always    { background: var(--always-bg);    color: var(--always); }
+  .lbl-sometimes { background: var(--sometimes-bg); color: var(--sometimes); }
+  .lbl-never     { background: var(--never-bg);     color: var(--never); }
+  .lbl-blank     { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+
+  .popup-names { display: flex; flex-wrap: wrap; gap: 6px; }
+  .name-chip {
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
   }
 
-  .loading { color: var(--muted); font-size: 14px; padding: 2rem 0; text-align: center; }
+  .respondents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+    margin-bottom: 2rem;
+  }
+  .respondent-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  .resp-dot { width: 8px; height: 8px; border-radius: 50%; background: #52B788; flex-shrink: 0; }
+  .resp-date { font-size: 11px; color: var(--muted); }
+
+  .no-data { color: var(--muted); font-size: 14px; padding: 1rem 0; }
 </style>
 </head>
 <body>
@@ -301,30 +343,44 @@
 
 <div class="container">
   <div id="dashboard">
-    <header>
+
+    <div class="dash-header">
       <div>
         <h1>Availability results</h1>
         <p id="subtitle">Loading…</p>
       </div>
       <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
-    </header>
+    </div>
 
     <div class="stats-row" id="stats-row"></div>
 
-    <div class="top-picks-section" style="margin-bottom:2rem">
-      <div class="section-title">Top windows</div>
-      <div class="top-picks" id="top-picks"></div>
+    <div style="margin-bottom:2.5rem">
+      <div class="section-title">Availability grid</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#95D5A8"></div>≥70% strong</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#FFCC7A"></div>40–69% possible</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#F9AAAA"></div>&lt;40% weak</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#E2DDD6"></div>no data / n/a</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:0.75rem">Click any cell to see who said what.</p>
+      <div class="grid-wrap"><table id="grid-table"></table></div>
     </div>
 
-    <div class="grid-section">
-      <div class="section-title">All windows</div>
-      <div id="full-grid"></div>
-    </div>
-
-    <div class="respondents-section">
+    <div>
       <div class="section-title">Respondents</div>
-      <div class="respondents-list" id="respondents-list"></div>
+      <div class="respondents-grid" id="respondents-grid"></div>
     </div>
+
+  </div>
+</div>
+
+<div class="popup-overlay" id="popup-overlay" onclick="maybeClose(event)">
+  <div class="popup" id="popup">
+    <button class="popup-close" onclick="closePopup()">×</button>
+    <div class="popup-title" id="popup-title"></div>
+    <div class="popup-subtitle" id="popup-subtitle"></div>
+    <div class="popup-score-bar" id="popup-bar"></div>
+    <div id="popup-body"></div>
   </div>
 </div>
 
@@ -334,30 +390,40 @@ const SUPABASE_URL = 'https://eqpqtswfkfmukzuhenjt.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcHF0c3dma2ZtdWt6dWhlbmp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1OTgwNzUsImV4cCI6MjA5NDE3NDA3NX0.jk1dbvSxwoSiOFFA7CeNJbJItXmJeDebU2D9rGtfvVA';
 
 const SLOTS = [
-  { id: 'morning',    name: 'Morning',               time: '9–11 am' },
-  { id: 'early_aftn', name: 'Early Afternoon',       time: '12–3 pm' },
-  { id: 'afternoon',  name: 'Afternoon',             time: '3–6 pm' },
+  { id: 'morning',    name: 'Morning',                time: '9–11 am' },
+  { id: 'early_aftn', name: 'Early Afternoon',        time: '12–3 pm' },
+  { id: 'afternoon',  name: 'Afternoon',              time: '3–6 pm' },
   { id: 'evening',    name: 'Evening / After Dinner', time: '8–10 pm' },
 ];
 const DAYS = [
-  { id: 'sun', label: 'Sunday',    slots: ['morning','early_aftn','afternoon','evening'] },
-  { id: 'mon', label: 'Monday',    slots: ['morning','early_aftn','afternoon','evening'] },
-  { id: 'tue', label: 'Tuesday',   slots: ['morning','early_aftn','afternoon','evening'] },
-  { id: 'wed', label: 'Wednesday', slots: ['morning','early_aftn','afternoon','evening'] },
-  { id: 'thu', label: 'Thursday',  slots: ['morning','early_aftn','afternoon','evening'] },
-  { id: 'fri', label: 'Friday',    slots: ['morning','early_aftn'] },
+  { id: 'sun', label: 'Sunday' },
+  { id: 'mon', label: 'Monday' },
+  { id: 'tue', label: 'Tuesday' },
+  { id: 'wed', label: 'Wednesday' },
+  { id: 'thu', label: 'Thursday' },
+  { id: 'fri', label: 'Friday' },
 ];
+const FRI_SLOTS = ['morning', 'early_aftn'];
 
-function windowId(dayId, slotId) { return `${dayId}_${slotId}`; }
-function windowLabel(dayId, slotId) {
-  const day = DAYS.find(d => d.id === dayId);
-  const slot = SLOTS.find(s => s.id === slotId);
-  return { day: day.label, slot: slot.name, time: slot.time };
+let allRows = [];
+
+function wid(dayId, slotId) { return `${dayId}_${slotId}`; }
+
+function calcScore(c, total) {
+  if (!total) return 0;
+  return (c.always * 2 + c.sometimes) / (total * 2) * 100;
+}
+
+function cellClass(s, total) {
+  if (!total) return 'empty';
+  if (s >= 70) return 'high';
+  if (s >= 40) return 'mid';
+  if (s > 0)   return 'low';
+  return 'zero';
 }
 
 function checkPassword() {
-  const val = document.getElementById('pw-input').value;
-  if (val === PASSWORD) {
+  if (document.getElementById('pw-input').value === PASSWORD) {
     document.getElementById('login-wrap').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     loadData();
@@ -365,143 +431,154 @@ function checkPassword() {
     document.getElementById('login-error').textContent = 'Incorrect password.';
   }
 }
-
-document.getElementById('pw-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') checkPassword();
-});
+document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
 
 async function loadData() {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/responses?select=*&order=submitted_at.asc`, {
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-      }
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
     });
-    const rows = await res.json();
-    render(rows);
+    allRows = await res.json();
+    render(allRows);
   } catch(e) {
     document.getElementById('subtitle').textContent = 'Error loading data.';
   }
 }
 
-function score(counts, total) {
-  if (total === 0) return 0;
-  return (counts.always * 2 + counts.sometimes * 1) / (total * 2) * 100;
+function tally(rows) {
+  const counts = {}, names = {};
+  DAYS.forEach(day => {
+    const slots = day.id === 'fri' ? FRI_SLOTS : SLOTS.map(s => s.id);
+    slots.forEach(sid => {
+      const k = wid(day.id, sid);
+      counts[k] = { always: 0, sometimes: 0, never: 0, blank: 0 };
+      names[k]  = { always: [], sometimes: [], never: [], blank: [] };
+    });
+  });
+  rows.forEach(row => {
+    const av = row.availability || {};
+    Object.keys(counts).forEach(k => {
+      const v = av[k];
+      const bucket = (v === 'always' || v === 'sometimes' || v === 'never') ? v : 'blank';
+      counts[k][bucket]++;
+      names[k][bucket].push(row.name);
+    });
+  });
+  return { counts, names };
 }
 
 function render(rows) {
   const total = rows.length;
   document.getElementById('subtitle').textContent =
-    `${total} response${total !== 1 ? 's' : ''} · Last updated ${new Date().toLocaleTimeString()}`;
+    `${total} response${total !== 1 ? 's' : ''} · Updated ${new Date().toLocaleTimeString()}`;
 
-  // Stats
-  const statsEl = document.getElementById('stats-row');
-  statsEl.innerHTML = `
+  document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Responses</div><div class="stat-value">${total}</div></div>
-    <div class="stat-card"><div class="stat-label">Windows polled</div><div class="stat-value">22</div></div>
-    <div class="stat-card"><div class="stat-label">Scoring</div><div class="stat-value" style="font-size:14px;padding-top:4px">Always=2 · Sometimes=1</div></div>
+    <div class="stat-card"><div class="stat-label">Windows</div><div class="stat-value">22</div></div>
+    <div class="stat-card"><div class="stat-label">Scoring</div><div class="stat-value" style="font-size:13px;padding-top:6px">Always=2 · Sometimes=1</div></div>
   `;
 
-  // Tally all windows
-  const tally = {};
-  DAYS.forEach(day => {
-    day.slots.forEach(slotId => {
-      const wid = windowId(day.id, slotId);
-      tally[wid] = { always: 0, sometimes: 0, never: 0, blank: 0 };
-    });
-  });
+  const { counts, names } = tally(rows);
 
-  rows.forEach(row => {
-    const av = row.availability || {};
-    Object.entries(tally).forEach(([wid, counts]) => {
-      const val = av[wid];
-      if (val === 'always') counts.always++;
-      else if (val === 'sometimes') counts.sometimes++;
-      else if (val === 'never') counts.never++;
-      else counts.blank++;
-    });
-  });
+  // Table
+  const thead = `<thead><tr>
+    <th>Time slot</th>
+    ${DAYS.map(d => `<th>${d.label}</th>`).join('')}
+  </tr></thead>`;
 
-  // Score and rank
-  const ranked = Object.entries(tally).map(([wid, counts]) => {
-    const [dayId, slotId] = wid.split(/_(?=[^_]+$)/);
-    const s = score(counts, total);
-    return { wid, dayId, slotId, counts, score: s };
-  }).sort((a, b) => b.score - a.score);
-
-  // Top picks
-  const topEl = document.getElementById('top-picks');
-  if (total === 0) {
-    topEl.innerHTML = '<div class="loading">No responses yet.</div>';
-  } else {
-    topEl.innerHTML = ranked.slice(0, 5).map((item, i) => {
-      const lbl = windowLabel(item.dayId, item.slotId);
-      const pct = Math.round(item.score);
-      const isFirst = i === 0;
-      const alwaysPct = total ? Math.round(item.counts.always / total * 100) : 0;
-      const sometimesPct = total ? Math.round(item.counts.sometimes / total * 100) : 0;
-      const neverPct = total ? Math.round(item.counts.never / total * 100) : 0;
-      return `<div class="pick-row ${isFirst ? 'gold' : ''}">
-        <div class="pick-rank ${isFirst ? 'first' : ''}">${isFirst ? '★' : i + 1}</div>
-        <div class="pick-name">
-          <strong>${lbl.day} · ${lbl.slot}</strong>
-          <span>${lbl.time}</span>
-        </div>
-        <div class="pick-bars">
-          ${item.counts.always ? `<div class="pick-bar" style="background:#52B788;width:${alwaysPct * 0.6 + 16}px">${item.counts.always}</div>` : ''}
-          ${item.counts.sometimes ? `<div class="pick-bar" style="background:#F4A621;width:${sometimesPct * 0.6 + 16}px">${item.counts.sometimes}</div>` : ''}
-          ${item.counts.never ? `<div class="pick-bar" style="background:#E07070;width:${neverPct * 0.6 + 16}px">${item.counts.never}</div>` : ''}
-        </div>
-        <div class="pick-score">${pct}%</div>
-      </div>`;
+  const tbody = SLOTS.map(slot => {
+    const cells = DAYS.map(day => {
+      const isFri = day.id === 'fri';
+      if (isFri && !FRI_SLOTS.includes(slot.id)) {
+        return `<td><div class="cell na"><div class="cell-score" style="font-size:18px;color:var(--border)">—</div></div></td>`;
+      }
+      const k = wid(day.id, slot.id);
+      const c = counts[k];
+      const s = calcScore(c, total);
+      const cls = cellClass(s, total);
+      const scoreStr = total ? Math.round(s) + '%' : '—';
+      const parts = [];
+      if (c.always)    parts.push(`${c.always}✓`);
+      if (c.sometimes) parts.push(`${c.sometimes}~`);
+      if (c.never)     parts.push(`${c.never}✗`);
+      const countStr = parts.length ? parts.join(' · ') : (total ? 'none' : '');
+      const clickable = total > 0 ? `onclick="openPopup('${k}')"` : '';
+      return `<td><div class="cell ${cls}" ${clickable}>
+        <div class="cell-score">${scoreStr}</div>
+        <div class="cell-counts">${countStr}</div>
+      </div></td>`;
     }).join('');
-  }
-
-  // Full grid
-  const gridEl = document.getElementById('full-grid');
-  const maxScore = ranked.length ? ranked[0].score : 1;
-  gridEl.innerHTML = DAYS.map(day => {
-    const slotRows = day.slots.map(slotId => {
-      const wid = windowId(day.id, slotId);
-      const counts = tally[wid];
-      const slot = SLOTS.find(s => s.id === slotId);
-      const s = score(counts, total);
-      const pillClass = s >= 70 ? 'pill-high' : s >= 40 ? 'pill-mid' : s > 0 ? 'pill-low' : 'pill-zero';
-      const alwaysPct  = total ? counts.always   / total * 100 : 0;
-      const somesPct   = total ? counts.sometimes / total * 100 : 0;
-      const neverPct   = total ? counts.never     / total * 100 : 0;
-      const blankPct   = total ? counts.blank     / total * 100 : 100;
-      return `<div class="slot-result-row">
-        <div class="slot-result-label">
-          <strong>${slot.name}</strong>
-          <span>${slot.time}</span>
-        </div>
-        <div class="bar-track">
-          <div class="bar-seg bar-always"    style="width:${alwaysPct}%">${alwaysPct >= 12 ? counts.always : ''}</div>
-          <div class="bar-seg bar-sometimes" style="width:${somesPct}%">${somesPct >= 12 ? counts.sometimes : ''}</div>
-          <div class="bar-seg bar-never"     style="width:${neverPct}%">${neverPct >= 12 ? counts.never : ''}</div>
-          <div class="bar-seg bar-blank"     style="width:${blankPct}%"></div>
-        </div>
-        <div class="slot-score-pill ${pillClass}">${total ? Math.round(s) + '%' : '—'}</div>
-      </div>`;
-    }).join('');
-    return `<div class="day-block">
-      <div class="day-header">${day.label}</div>
-      <div class="slot-rows">${slotRows}</div>
-    </div>`;
+    return `<tr>
+      <td>${slot.name}<span>${slot.time}</span></td>
+      ${cells}
+    </tr>`;
   }).join('');
 
+  document.getElementById('grid-table').innerHTML = thead + `<tbody>${tbody}</tbody>`;
+
   // Respondents
-  const respEl = document.getElementById('respondents-list');
-  if (total === 0) {
-    respEl.innerHTML = '<span style="color:var(--muted);font-size:14px">No responses yet.</span>';
+  const el = document.getElementById('respondents-grid');
+  if (!total) {
+    el.innerHTML = '<div class="no-data">No responses yet.</div>';
   } else {
-    respEl.innerHTML = rows.map(r =>
-      `<div class="respondent-chip"><div class="dot"></div>${r.name}</div>`
-    ).join('');
+    el.innerHTML = rows.map(r => {
+      const when = new Date(r.submitted_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+      return `<div class="respondent-card">
+        <div class="resp-dot"></div>
+        <div><div>${r.name}</div><div class="resp-date">${when}</div></div>
+      </div>`;
+    }).join('');
   }
 }
+
+function openPopup(k) {
+  const total = allRows.length;
+  const c = { always: 0, sometimes: 0, never: 0, blank: 0 };
+  const n = { always: [], sometimes: [], never: [], blank: [] };
+  allRows.forEach(row => {
+    const v = (row.availability || {})[k];
+    const bucket = (v === 'always' || v === 'sometimes' || v === 'never') ? v : 'blank';
+    c[bucket]++; n[bucket].push(row.name);
+  });
+
+  const [dayId, slotId] = k.split(/_(?=[^_]+$)/);
+  const day  = DAYS.find(d => d.id === dayId);
+  const slot = SLOTS.find(s => s.id === slotId);
+  const s = Math.round(calcScore(c, total));
+
+  document.getElementById('popup-title').textContent = `${day.label} · ${slot.name}`;
+  document.getElementById('popup-subtitle').textContent = `${slot.time} · Score: ${s}%`;
+
+  const ap = total ? c.always/total*100 : 0;
+  const sp = total ? c.sometimes/total*100 : 0;
+  const np = total ? c.never/total*100 : 0;
+  const bp = total ? c.blank/total*100 : 100;
+  document.getElementById('popup-bar').innerHTML = `
+    <div class="psb-always"    style="flex:${ap}"></div>
+    <div class="psb-sometimes" style="flex:${sp}"></div>
+    <div class="psb-never"     style="flex:${np}"></div>
+    <div class="psb-blank"     style="flex:${bp}"></div>
+  `;
+
+  const groups = [
+    { key: 'always',    label: 'Always',    cls: 'lbl-always' },
+    { key: 'sometimes', label: 'Sometimes', cls: 'lbl-sometimes' },
+    { key: 'never',     label: 'Never',     cls: 'lbl-never' },
+    { key: 'blank',     label: 'No answer', cls: 'lbl-blank' },
+  ];
+  document.getElementById('popup-body').innerHTML = groups
+    .filter(g => n[g.key].length)
+    .map(g => `<div class="popup-group">
+      <div class="popup-group-label ${g.cls}">${g.label} (${n[g.key].length})</div>
+      <div class="popup-names">${n[g.key].map(nm => `<div class="name-chip">${nm}</div>`).join('')}</div>
+    </div>`).join('');
+
+  document.getElementById('popup-overlay').classList.add('open');
+}
+
+function maybeClose(e) { if (e.target.id === 'popup-overlay') closePopup(); }
+function closePopup() { document.getElementById('popup-overlay').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
 </script>
 </body>
 </html>

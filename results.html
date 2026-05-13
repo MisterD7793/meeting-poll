@@ -225,6 +225,8 @@
     line-height: 1.4;
     text-align: center;
   }
+  .cell.winner   { box-shadow: 0 0 0 2.5px var(--accent); }
+  .cell-veto     { font-size: 10px; color: var(--never); margin-top: 2px; }
 
   /* Popup */
   .popup-overlay {
@@ -409,13 +411,14 @@ let allRows = [];
 
 function wid(dayId, slotId) { return `${dayId}_${slotId}`; }
 
-function calcScore(c, total) {
-  if (!total) return 0;
-  return (c.always * 2 + c.sometimes) / (total * 2) * 100;
+function calcScore(c) {
+  const responded = c.always + c.sometimes + c.never;
+  if (!responded) return null;
+  return (c.always * 2 + c.sometimes) / (responded * 2) * 100;
 }
 
-function cellClass(s, total) {
-  if (!total) return 'empty';
+function cellClass(s) {
+  if (s === null) return 'empty';
   if (s >= 70) return 'high';
   if (s >= 40) return 'mid';
   if (s > 0)   return 'low';
@@ -480,6 +483,19 @@ function render(rows) {
 
   const { counts, names } = tally(rows);
 
+  // Pre-compute scores for winner detection
+  const scoreMap = {};
+  DAYS.forEach(day => {
+    (day.id === 'fri' ? FRI_SLOTS : SLOTS.map(s => s.id)).forEach(sid => {
+      const k = wid(day.id, sid);
+      scoreMap[k] = calcScore(counts[k]);
+    });
+  });
+  const validScores = Object.values(scoreMap).filter(s => s !== null);
+  const maxScore = validScores.length ? Math.max(...validScores) : -1;
+  const anyHigh = validScores.some(s => s >= 70);
+  const isWinner = k => scoreMap[k] !== null && (anyHigh ? scoreMap[k] >= 70 : scoreMap[k] === maxScore);
+
   // Table
   const thead = `<thead><tr>
     <th>Time slot</th>
@@ -494,17 +510,20 @@ function render(rows) {
       }
       const k = wid(day.id, slot.id);
       const c = counts[k];
-      const s = calcScore(c, total);
-      const cls = cellClass(s, total);
-      const scoreStr = total ? Math.round(s) + '%' : '—';
+      const s = calcScore(c);
+      const cls = cellClass(s);
+      const winner = isWinner(k);
+      const scoreStr = s !== null ? Math.round(s) + '%' : '—';
       const parts = [];
       if (c.always)    parts.push(`${c.always}✓`);
       if (c.sometimes) parts.push(`${c.sometimes}~`);
       if (c.never)     parts.push(`${c.never}✗`);
       const countStr = parts.length ? parts.join(' · ') : (total ? 'none' : '');
-      return `<td><div class="cell ${cls}" onclick="openPopup('${k}')">
+      const veto = c.never > 5 ? `<div class="cell-veto">⚠ ${c.never} never</div>` : '';
+      return `<td><div class="cell ${cls}${winner ? ' winner' : ''}" onclick="openPopup('${k}')">
         <div class="cell-score">${scoreStr}</div>
         <div class="cell-counts">${countStr}</div>
+        ${veto}
       </div></td>`;
     }).join('');
     return `<tr>
@@ -544,7 +563,8 @@ function openPopup(k) {
   const day  = DAYS.find(d => d.id === dayId);
   const slot = SLOTS.find(s => s.id === slotId);
   if (!day || !slot) { console.error("Unknown key:", k, dayId, slotId); return; }
-  const s = Math.round(calcScore(c, total));
+  const rawScore = calcScore(c);
+  const s = rawScore !== null ? Math.round(rawScore) : 0;
 
   document.getElementById('popup-title').textContent = `${day.label} · ${slot.name}`;
   document.getElementById('popup-subtitle').textContent = `${slot.time} · Score: ${s}%`;

@@ -324,9 +324,26 @@
     align-items: center;
     gap: 8px;
     font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
   }
+  .respondent-card:hover { border-color: var(--accent); }
+  .respondent-card.selected { background: var(--accent-bg); border-color: var(--accent); }
+  .respondent-card.selected .resp-dot { background: var(--accent); }
   .resp-dot { width: 8px; height: 8px; border-radius: 50%; background: #52B788; flex-shrink: 0; }
   .resp-date { font-size: 11px; color: var(--muted); }
+  .clear-sel-btn {
+    padding: 5px 12px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .clear-sel-btn:hover { background: var(--accent-bg); }
 
   .no-data { color: var(--muted); font-size: 14px; padding: 1rem 0; }
 </style>
@@ -369,7 +386,10 @@
     </div>
 
     <div>
-      <div class="section-title">Respondents</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+        <div class="section-title" style="margin-bottom:0">Respondents</div>
+        <button class="clear-sel-btn" id="clear-sel-btn" style="display:none" onclick="clearSelection()">Clear selection</button>
+      </div>
       <div class="respondents-grid" id="respondents-grid"></div>
     </div>
 
@@ -408,6 +428,21 @@ const DAYS = [
 const FRI_SLOTS = ['morning', 'early_aftn'];
 
 let allRows = [];
+let selectedNames = new Set();
+
+function toggleName(name) {
+  if (selectedNames.has(name)) selectedNames.delete(name);
+  else selectedNames.add(name);
+  redraw();
+}
+function clearSelection() {
+  selectedNames.clear();
+  redraw();
+}
+function redraw() {
+  const rows = selectedNames.size ? allRows.filter(r => selectedNames.has(r.name)) : allRows;
+  render(rows);
+}
 
 function wid(dayId, slotId) { return `${dayId}_${slotId}`; }
 
@@ -442,7 +477,7 @@ async function loadData() {
       headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
     });
     allRows = await res.json();
-    render(allRows);
+    redraw();
   } catch(e) {
     document.getElementById('subtitle').textContent = 'Error loading data.';
   }
@@ -472,8 +507,9 @@ function tally(rows) {
 
 function render(rows) {
   const total = rows.length;
+  const filterNote = selectedNames.size ? ` · Showing ${total} of ${allRows.length}` : '';
   document.getElementById('subtitle').textContent =
-    `${total} response${total !== 1 ? 's' : ''} · Updated ${new Date().toLocaleTimeString()}`;
+    `${allRows.length} response${allRows.length !== 1 ? 's' : ''}${filterNote} · Updated ${new Date().toLocaleTimeString()}`;
 
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Responses</div><div class="stat-value">${total}</div></div>
@@ -536,12 +572,14 @@ function render(rows) {
 
   // Respondents
   const el = document.getElementById('respondents-grid');
-  if (!total) {
+  document.getElementById('clear-sel-btn').style.display = selectedNames.size ? 'inline-block' : 'none';
+  if (!allRows.length) {
     el.innerHTML = '<div class="no-data">No responses yet.</div>';
   } else {
-    el.innerHTML = rows.map(r => {
+    el.innerHTML = allRows.map(r => {
       const when = new Date(r.submitted_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-      return `<div class="respondent-card">
+      const sel = selectedNames.has(r.name);
+      return `<div class="respondent-card${sel ? ' selected' : ''}" data-name="${r.name.replace(/"/g, '&quot;')}">
         <div class="resp-dot"></div>
         <div><div>${r.name}</div><div class="resp-date">${when}</div></div>
       </div>`;
@@ -599,6 +637,11 @@ function openPopup(k) {
 function maybeClose(e) { if (e.target.id === 'popup-overlay') closePopup(); }
 function closePopup() { document.getElementById('popup-overlay').classList.remove('open'); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+
+document.getElementById('respondents-grid').addEventListener('click', e => {
+  const card = e.target.closest('.respondent-card');
+  if (card && card.dataset.name) toggleName(card.dataset.name);
+});
 </script>
 </body>
 </html>

@@ -149,7 +149,6 @@
   .cell.zero .cell-score   { color: var(--muted); }
   .cell.na .cell-score     { color: var(--border); font-size: 18px; }
   .cell-counts { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.4; text-align: center; }
-  .winner-crown { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 13px; line-height: 1; }
 
   /* Popup */
   .popup-overlay {
@@ -256,23 +255,19 @@
         <div class="legend-item"><div class="legend-dot" style="background:#FFCC7A"></div>40–69% possible</div>
         <div class="legend-item"><div class="legend-dot" style="background:#F9AAAA"></div>&lt;40% weak</div>
         <div class="legend-item"><div class="legend-dot" style="background:#E2DDD6"></div>no data / n/a</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#2D6A4F;border-radius:50%"></div>top slot</div>
+
       </div>
       <p style="font-size:12px;color:var(--muted);margin-bottom:0.75rem">Click any cell to see who said what.</p>
-
-      <div class="filter-bar" id="filter-bar" style="display:none">
-        <span class="filter-label">Filter by respondent:</span>
-        <div class="filter-chips" id="filter-chips"></div>
-        <button class="filter-reset" onclick="resetFilter()" id="clear-btn">Clear selection</button>
-        <span class="filter-active-note" id="filter-note"></span>
-      </div>
 
       <div class="grid-wrap"><table id="grid-table"></table></div>
     </div>
 
     <div style="margin-bottom:2rem">
-      <div class="section-title">Respondents</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:0.75rem">Click a name to filter the grid by that person's availability.</p>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.4rem">
+        <div class="section-title" style="margin-bottom:0">Respondents</div>
+        <button class="filter-reset" id="clear-btn" onclick="resetFilter()" style="display:none">Clear selection</button>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:0.75rem">Click names to filter the grid to a subset.</p>
       <div class="respondents-grid" id="respondents-grid"></div>
     </div>
 
@@ -418,23 +413,16 @@ function render() {
     <div class="stat-card"><div class="stat-label">${isFiltered ? 'Filtered' : 'Scoring'}</div><div class="stat-value" style="font-size:13px;padding-top:6px">${isFiltered ? `Showing: ${activeFilter}` : 'Always=2 · Sometimes=1'}</div></div>
   `;
 
+  // Show/hide clear button
+  const clearBtn = document.getElementById('clear-btn');
+  if (clearBtn) clearBtn.style.display = isFiltered ? 'inline-block' : 'none';
+
   const { counts, names } = tally(rows);
   const winner = findWinner(counts, total);
 
-  // Filter bar
-  const filterBar = document.getElementById('filter-bar');
-  const filterChips = document.getElementById('filter-chips');
-  const filterNote = document.getElementById('filter-note');
-  if (allRows.length) {
-    filterBar.style.display = 'flex';
-    const respondentNames = [...new Set(allRows.map(r => r.name))].sort();
-    filterChips.innerHTML = respondentNames.map(name =>
-      `<div class="filter-chip ${activeFilter.has(name) ? 'active' : ''}" onclick="setFilter('${name.replace(/'/g, "\\'")}')">${name}</div>`
-    ).join('');
-    filterNote.textContent = isFiltered ? `${total} of ${allRows.length} respondent${allRows.length !== 1 ? 's' : ''}` : '';
-  } else {
-    filterBar.style.display = 'none';
-  }
+  // Show/hide clear button
+  const clearBtn = document.getElementById('clear-btn');
+  if (clearBtn) clearBtn.style.display = isFiltered ? 'inline-block' : 'none';
 
   // Table
   const thead = `<thead><tr>
@@ -460,7 +448,6 @@ function render() {
       if (c.never)     parts.push(`${c.never}✗`);
       const countStr = parts.length ? parts.join(' · ') : (total ? 'none' : '');
       return `<td><div class="cell ${cls}${isWinner ? ' winner' : ''}" onclick="openPopup('${k}')">
-        ${isWinner ? '<span class="winner-crown">★</span>' : ''}
         <div class="cell-score">${scoreStr}</div>
         <div class="cell-counts">${countStr}</div>
       </div></td>`;

@@ -225,8 +225,6 @@
     line-height: 1.4;
     text-align: center;
   }
-  .cell.winner   { box-shadow: 0 0 0 2.5px var(--accent); }
-  .cell-veto     { font-size: 10px; color: var(--never); margin-top: 2px; }
 
   /* Popup */
   .popup-overlay {
@@ -324,28 +322,38 @@
     align-items: center;
     gap: 8px;
     font-size: 14px;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-    user-select: none;
   }
-  .respondent-card:hover { border-color: var(--accent); }
-  .respondent-card.selected { background: var(--accent-bg); border-color: var(--accent); }
-  .respondent-card.selected .resp-dot { background: var(--accent); }
   .resp-dot { width: 8px; height: 8px; border-radius: 50%; background: #52B788; flex-shrink: 0; }
   .resp-date { font-size: 11px; color: var(--muted); }
-  .clear-sel-btn {
-    padding: 5px 12px;
-    border: 1px solid var(--accent);
-    border-radius: 6px;
-    background: transparent;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    color: var(--accent);
-    cursor: pointer;
-  }
-  .clear-sel-btn:hover { background: var(--accent-bg); }
 
   .no-data { color: var(--muted); font-size: 14px; padding: 1rem 0; }
+
+  .missing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+  }
+  .missing-card {
+    background: var(--never-bg);
+    border: 1px solid var(--never-border);
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  .missing-dot { width: 8px; height: 8px; border-radius: 50%; background: #E07070; flex-shrink: 0; }
+  .missing-email { font-size: 11px; color: var(--never); margin-top: 1px; opacity: 0.8; }
+  .all-responded {
+    font-size: 14px;
+    color: var(--always);
+    background: var(--always-bg);
+    border: 1px solid var(--always-border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    display: inline-block;
+  }
 </style>
 </head>
 <body>
@@ -386,11 +394,16 @@
     </div>
 
     <div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
-        <div class="section-title" style="margin-bottom:0">Respondents</div>
-        <button class="clear-sel-btn" id="clear-sel-btn" style="display:none" onclick="clearSelection()">Clear selection</button>
-      </div>
+      <div class="section-title">Respondents</div>
       <div class="respondents-grid" id="respondents-grid"></div>
+    </div>
+
+    <div style="margin-bottom:2rem">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.75rem">
+        <div class="section-title" style="margin-bottom:0">Still needed</div>
+        <a href="match.html" style="font-size:12px;color:var(--accent);text-decoration:none">Manage matches &rarr;</a>
+      </div>
+      <div id="missing-grid"></div>
     </div>
 
   </div>
@@ -428,32 +441,16 @@ const DAYS = [
 const FRI_SLOTS = ['morning', 'early_aftn'];
 
 let allRows = [];
-let selectedNames = new Set();
-
-function toggleName(name) {
-  if (selectedNames.has(name)) selectedNames.delete(name);
-  else selectedNames.add(name);
-  redraw();
-}
-function clearSelection() {
-  selectedNames.clear();
-  redraw();
-}
-function redraw() {
-  const rows = selectedNames.size ? allRows.filter(r => selectedNames.has(r.name)) : allRows;
-  render(rows);
-}
 
 function wid(dayId, slotId) { return `${dayId}_${slotId}`; }
 
-function calcScore(c) {
-  const responded = c.always + c.sometimes + c.never;
-  if (!responded) return null;
-  return (c.always * 2 + c.sometimes) / (responded * 2) * 100;
+function calcScore(c, total) {
+  if (!total) return 0;
+  return (c.always * 2 + c.sometimes) / (total * 2) * 100;
 }
 
-function cellClass(s) {
-  if (s === null) return 'empty';
+function cellClass(s, total) {
+  if (!total) return 'empty';
   if (s >= 70) return 'high';
   if (s >= 40) return 'mid';
   if (s > 0)   return 'low';
@@ -471,13 +468,21 @@ function checkPassword() {
 }
 document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
 
+let allMatches = [];
+
 async function loadData() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/responses?select=*&order=submitted_at.asc`, {
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-    });
-    allRows = await res.json();
-    redraw();
+    const [responsesRes, matchesRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/responses?select=*&order=submitted_at.asc`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+      }),
+      fetch(`${SUPABASE_URL}/rest/v1/member_matches?select=*`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+      }),
+    ]);
+    allRows = await responsesRes.json();
+    allMatches = await matchesRes.json();
+    render(allRows, allMatches);
   } catch(e) {
     document.getElementById('subtitle').textContent = 'Error loading data.';
   }
@@ -505,11 +510,10 @@ function tally(rows) {
   return { counts, names };
 }
 
-function render(rows) {
+function render(rows, matches) {
   const total = rows.length;
-  const filterNote = selectedNames.size ? ` · Showing ${total} of ${allRows.length}` : '';
   document.getElementById('subtitle').textContent =
-    `${allRows.length} response${allRows.length !== 1 ? 's' : ''}${filterNote} · Updated ${new Date().toLocaleTimeString()}`;
+    `${total} response${total !== 1 ? 's' : ''} · Updated ${new Date().toLocaleTimeString()}`;
 
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Responses</div><div class="stat-value">${total}</div></div>
@@ -518,19 +522,6 @@ function render(rows) {
   `;
 
   const { counts, names } = tally(rows);
-
-  // Pre-compute scores for winner detection
-  const scoreMap = {};
-  DAYS.forEach(day => {
-    (day.id === 'fri' ? FRI_SLOTS : SLOTS.map(s => s.id)).forEach(sid => {
-      const k = wid(day.id, sid);
-      scoreMap[k] = calcScore(counts[k]);
-    });
-  });
-  const validScores = Object.values(scoreMap).filter(s => s !== null);
-  const maxScore = validScores.length ? Math.max(...validScores) : -1;
-  const anyHigh = validScores.some(s => s >= 70);
-  const isWinner = k => scoreMap[k] !== null && (anyHigh ? scoreMap[k] >= 70 : scoreMap[k] === maxScore);
 
   // Table
   const thead = `<thead><tr>
@@ -546,20 +537,17 @@ function render(rows) {
       }
       const k = wid(day.id, slot.id);
       const c = counts[k];
-      const s = calcScore(c);
-      const cls = cellClass(s);
-      const winner = isWinner(k);
-      const scoreStr = s !== null ? Math.round(s) + '%' : '—';
+      const s = calcScore(c, total);
+      const cls = cellClass(s, total);
+      const scoreStr = total ? Math.round(s) + '%' : '—';
       const parts = [];
       if (c.always)    parts.push(`${c.always}✓`);
       if (c.sometimes) parts.push(`${c.sometimes}~`);
       if (c.never)     parts.push(`${c.never}✗`);
       const countStr = parts.length ? parts.join(' · ') : (total ? 'none' : '');
-      const veto = c.never > 5 ? `<div class="cell-veto">⚠ ${c.never} never</div>` : '';
-      return `<td><div class="cell ${cls}${winner ? ' winner' : ''}" onclick="openPopup('${k}')">
+      return `<td><div class="cell ${cls}" onclick="openPopup('${k}')">
         <div class="cell-score">${scoreStr}</div>
         <div class="cell-counts">${countStr}</div>
-        ${veto}
       </div></td>`;
     }).join('');
     return `<tr>
@@ -572,18 +560,40 @@ function render(rows) {
 
   // Respondents
   const el = document.getElementById('respondents-grid');
-  document.getElementById('clear-sel-btn').style.display = selectedNames.size ? 'inline-block' : 'none';
-  if (!allRows.length) {
+  if (!total) {
     el.innerHTML = '<div class="no-data">No responses yet.</div>';
   } else {
-    el.innerHTML = allRows.map(r => {
+    el.innerHTML = rows.map(r => {
       const when = new Date(r.submitted_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-      const sel = selectedNames.has(r.name);
-      return `<div class="respondent-card${sel ? ' selected' : ''}" data-name="${r.name.replace(/"/g, '&quot;')}">
+      return `<div class="respondent-card">
         <div class="resp-dot"></div>
         <div><div>${r.name}</div><div class="resp-date">${when}</div></div>
       </div>`;
     }).join('');
+  }
+
+  // Missing members
+  const missingEl = document.getElementById('missing-grid');
+  if (!matches || !matches.length) {
+    missingEl.innerHTML = '<div class="no-data">No member matches set up yet. <a href="match.html" style="color:var(--accent)">Set up matches →</a></div>';
+  } else {
+    const respondedNames = new Set(rows.map(r => r.name.trim().toLowerCase()));
+    const missing = matches.filter(m => {
+      if (!m.respondent_name) return true;
+      return !respondedNames.has(m.respondent_name.trim().toLowerCase());
+    });
+    if (!missing.length) {
+      missingEl.innerHTML = '<div class="all-responded">✓ Everyone has responded!</div>';
+    } else {
+      missingEl.innerHTML = '<div class="missing-grid">' + missing.map(m => `
+        <div class="missing-card">
+          <div class="missing-dot"></div>
+          <div>
+            <div>${m.groups_io_name || m.groups_io_email}</div>
+            <div class="missing-email">${m.respondent_name ? 'no response yet' : 'not matched'}</div>
+          </div>
+        </div>`).join('') + '</div>';
+    }
   }
 }
 
@@ -601,8 +611,7 @@ function openPopup(k) {
   const day  = DAYS.find(d => d.id === dayId);
   const slot = SLOTS.find(s => s.id === slotId);
   if (!day || !slot) { console.error("Unknown key:", k, dayId, slotId); return; }
-  const rawScore = calcScore(c);
-  const s = rawScore !== null ? Math.round(rawScore) : 0;
+  const s = Math.round(calcScore(c, total));
 
   document.getElementById('popup-title').textContent = `${day.label} · ${slot.name}`;
   document.getElementById('popup-subtitle').textContent = `${slot.time} · Score: ${s}%`;
@@ -637,11 +646,6 @@ function openPopup(k) {
 function maybeClose(e) { if (e.target.id === 'popup-overlay') closePopup(); }
 function closePopup() { document.getElementById('popup-overlay').classList.remove('open'); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
-
-document.getElementById('respondents-grid').addEventListener('click', e => {
-  const card = e.target.closest('.respondent-card');
-  if (card && card.dataset.name) toggleName(card.dataset.name);
-});
 </script>
 </body>
 </html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meeting Poll — Match Members</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --border: #E2DDD6;
+    --text: #1A1714;
+    --muted: #7A736B;
+    --always: #2D6A4F;
+    --always-bg: #D8F3DC;
+    --always-border: #95D5A8;
+    --never: #9B2C2C;
+    --never-bg: #FDE8E8;
+    --never-border: #F9AAAA;
+    --accent: #2C4A7C;
+    --accent-bg: #E8EDF5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+  }
+  .login-card h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-bottom: 0.4rem;
+  }
+  .login-card p { color: var(--muted); font-size: 14px; margin-bottom: 1.5rem; }
+  .login-card input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    margin-bottom: 0.75rem;
+    text-align: center;
+    letter-spacing: 0.1em;
+  }
+  .login-card input:focus { border-color: var(--accent); }
+  .login-btn {
+    width: 100%;
+    padding: 11px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .login-btn:hover { opacity: 0.85; }
+  .login-error { color: var(--never); font-size: 13px; margin-top: 0.5rem; min-height: 18px; }
+
+  #main { display: none; }
+
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+  }
+  .page-header p { color: var(--muted); font-size: 14px; margin-top: 0.25rem; }
+
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--text);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn.primary:hover { opacity: 0.85; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+  }
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+  .stat-value { font-size: 22px; font-weight: 500; }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+  }
+
+  .match-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .match-table-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 80px;
+    gap: 1rem;
+    padding: 0.65rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .match-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 80px;
+    gap: 1rem;
+    padding: 0.65rem 1.25rem;
+    align-items: center;
+    border-bottom: 0.5px solid var(--border);
+    transition: background 0.1s;
+  }
+  .match-row:last-child { border-bottom: none; }
+  .match-row:hover { background: var(--bg); }
+  .match-row.matched { background: #F0FAF4; }
+  .match-row.matched:hover { background: #E8F6EE; }
+
+  .member-info { }
+  .member-name { font-size: 14px; font-weight: 500; }
+  .member-email { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  .match-select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 6px 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .match-select:focus { border-color: var(--accent); }
+  .match-select.has-value {
+    border-color: var(--always-border);
+    background: var(--always-bg);
+    color: var(--always);
+  }
+
+  .match-status {
+    font-size: 12px;
+    text-align: center;
+  }
+  .status-matched { color: var(--always); }
+  .status-unmatched { color: var(--muted); }
+
+  .save-bar {
+    position: sticky;
+    bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  .save-status { font-size: 14px; color: var(--muted); }
+  .save-status.success { color: var(--always); }
+  .save-status.error { color: var(--never); }
+
+  .loading { color: var(--muted); font-size: 14px; padding: 2rem; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="login-wrap">
+  <div class="login-card">
+    <h1>Member matching</h1>
+    <p>Enter the password to manage member matches</p>
+    <input type="password" id="pw-input" placeholder="••••••••" />
+    <button class="login-btn" onclick="checkPassword()">Continue</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div id="main">
+    <div class="page-header">
+      <div>
+        <h1>Match members</h1>
+        <p>Link each Groups.io member to their poll response name</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="loadAll()">↻ Refresh</button>
+        <a href="results.html"><button class="btn">← Results</button></a>
+      </div>
+    </div>
+
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card"><div class="stat-label">Loading</div><div class="stat-value">…</div></div>
+    </div>
+
+    <div class="section-title">Groups.io members</div>
+    <div class="match-table">
+      <div class="match-table-header">
+        <div>Groups.io member</div>
+        <div>Poll respondent</div>
+        <div style="text-align:center">Status</div>
+      </div>
+      <div id="match-rows"><div class="loading">Loading members…</div></div>
+    </div>
+
+    <div class="save-bar">
+      <div class="save-status" id="save-status">Unsaved changes will be lost if you navigate away.</div>
+      <button class="btn primary" id="save-btn" onclick="saveMatches()">Save matches</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PASSWORD = 'Schedule!';
+const SUPABASE_URL = 'https://eqpqtswfkfmukzuhenjt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcHF0c3dma2ZtdWt6dWhlbmp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1OTgwNzUsImV4cCI6MjA5NDE3NDA3NX0.jk1dbvSxwoSiOFFA7CeNJbJItXmJeDebU2D9rGtfvVA';
+
+const headers = {
+  'apikey': SUPABASE_ANON_KEY,
+  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+  'Content-Type': 'application/json',
+};
+
+let groupsMembers = [];
+let respondents = [];
+let existingMatches = {};
+
+function checkPassword() {
+  if (document.getElementById('pw-input').value === PASSWORD) {
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    loadAll();
+  } else {
+    document.getElementById('login-error').textContent = 'Incorrect password.';
+  }
+}
+document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
+
+async function loadAll() {
+  document.getElementById('match-rows').innerHTML = '<div class="loading">Loading…</div>';
+  try {
+    const [membersRes, respondentsRes, matchesRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/functions/v1/groups-members`, { headers }),
+      fetch(`${SUPABASE_URL}/rest/v1/responses?select=name&order=name.asc`, { headers }),
+      fetch(`${SUPABASE_URL}/rest/v1/member_matches?select=*`, { headers }),
+    ]);
+
+    const membersData = await membersRes.json();
+    const respondentsData = await respondentsRes.json();
+    const matchesData = await matchesRes.json();
+
+    groupsMembers = (membersData.members || []).sort((a, b) =>
+      (a.name || a.email).localeCompare(b.name || b.email)
+    );
+    respondents = [...new Set(respondentsData.map(r => r.name))].sort();
+    existingMatches = {};
+    (matchesData || []).forEach(m => {
+      existingMatches[m.groups_io_email] = m.respondent_name || '';
+    });
+
+    renderRows();
+    updateStats();
+  } catch(e) {
+    document.getElementById('match-rows').innerHTML = `<div class="loading">Error loading data: ${e.message}</div>`;
+  }
+}
+
+function renderRows() {
+  const container = document.getElementById('match-rows');
+  if (!groupsMembers.length) {
+    container.innerHTML = '<div class="loading">No members found.</div>';
+    return;
+  }
+
+  container.innerHTML = groupsMembers.map(member => {
+    const currentMatch = existingMatches[member.email] || '';
+    const hasMatch = !!currentMatch;
+    return `<div class="match-row ${hasMatch ? 'matched' : ''}" id="row-${CSS.escape(member.email)}">
+      <div class="member-info">
+        <div class="member-name">${member.name || '—'}</div>
+        <div class="member-email">${member.email}</div>
+      </div>
+      <div>
+        <select class="match-select ${hasMatch ? 'has-value' : ''}"
+          data-email="${member.email}"
+          data-name="${(member.name || '').replace(/"/g, '&quot;')}"
+          onchange="onSelectChange(this)">
+          <option value="">— not matched —</option>
+          ${respondents.map(r =>
+            `<option value="${r}" ${r === currentMatch ? 'selected' : ''}>${r}</option>`
+          ).join('')}
+        </select>
+      </div>
+      <div class="match-status">
+        ${hasMatch
+          ? `<span class="status-matched">✓ matched</span>`
+          : `<span class="status-unmatched">unmatched</span>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function onSelectChange(select) {
+  const email = select.dataset.email;
+  const val = select.value;
+  existingMatches[email] = val;
+
+  const row = document.getElementById(`row-${CSS.escape(email)}`);
+  const statusEl = row.querySelector('.match-status');
+  if (val) {
+    select.classList.add('has-value');
+    row.classList.add('matched');
+    statusEl.innerHTML = '<span class="status-matched">✓ matched</span>';
+  } else {
+    select.classList.remove('has-value');
+    row.classList.remove('matched');
+    statusEl.innerHTML = '<span class="status-unmatched">unmatched</span>';
+  }
+  updateStats();
+  document.getElementById('save-status').textContent = 'You have unsaved changes.';
+  document.getElementById('save-status').className = 'save-status';
+}
+
+function updateStats() {
+  const total = groupsMembers.length;
+  const matched = groupsMembers.filter(m => !!existingMatches[m.email]).length;
+  const unmatched = total - matched;
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total members</div><div class="stat-value">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Matched</div><div class="stat-value" style="color:var(--always)">${matched}</div></div>
+    <div class="stat-card"><div class="stat-label">Unmatched</div><div class="stat-value" style="color:var(--muted)">${unmatched}</div></div>
+    <div class="stat-card"><div class="stat-label">Respondents</div><div class="stat-value">${respondents.length}</div></div>
+  `;
+}
+
+async function saveMatches() {
+  const btn = document.getElementById('save-btn');
+  const statusEl = document.getElementById('save-status');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  statusEl.textContent = 'Saving…';
+  statusEl.className = 'save-status';
+
+  try {
+    const upserts = groupsMembers.map(member => ({
+      groups_io_email: member.email,
+      groups_io_name: member.name || member.email,
+      respondent_name: existingMatches[member.email] || null,
+    }));
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/member_matches`, {
+      method: 'POST',
+      headers: {
+        ...headers,
+        'Prefer': 'resolution=merge-duplicates',
+      },
+      body: JSON.stringify(upserts),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || `HTTP ${res.status}`);
+    }
+
+    statusEl.textContent = `Saved at ${new Date().toLocaleTimeString()}`;
+    statusEl.className = 'save-status success';
+  } catch(e) {
+    statusEl.textContent = `Error: ${e.message}`;
+    statusEl.className = 'save-status error';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save matches';
+  }
+}
+</script>
+</body>
+</html>

@@ -78,31 +78,7 @@
   .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
   .stat-value { font-size: 22px; font-weight: 500; }
 
-  /* Section title */
   .section-title { font-family: 'DM Serif Display', serif; font-size: 1.2rem; font-weight: 400; margin-bottom: 0.75rem; }
-
-  /* Subset filter */
-  .filter-bar {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-    padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; align-items: center;
-    gap: 0.75rem; flex-wrap: wrap;
-  }
-  .filter-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
-  .filter-chips { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
-  .filter-chip {
-    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
-    background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 12px;
-    cursor: pointer; color: var(--muted); transition: all 0.15s; user-select: none;
-  }
-  .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
-  .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .filter-reset {
-    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
-    background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 12px;
-    cursor: pointer; color: var(--muted); transition: all 0.15s; white-space: nowrap;
-  }
-  .filter-reset:hover { border-color: var(--never); color: var(--never); }
-  .filter-active-note { font-size: 12px; color: var(--accent); font-weight: 500; }
 
   /* Legend */
   .legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; font-size: 12px; color: var(--muted); }
@@ -122,32 +98,30 @@
   thead th:first-child { text-align: left; padding-left: 1.25rem; width: 145px; }
   tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
   tbody td { padding: 6px 4px; vertical-align: middle; text-align: center; }
-  tbody td:first-child {
-    text-align: left; padding-left: 1.25rem; font-weight: 500; font-size: 13px; white-space: nowrap;
-  }
+  tbody td:first-child { text-align: left; padding-left: 1.25rem; font-weight: 500; font-size: 13px; white-space: nowrap; }
   tbody td:first-child span { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
 
   /* Cell */
   .cell {
     display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
     width: 100%; min-width: 88px; border-radius: 8px; padding: 7px 4px; cursor: pointer;
-    transition: transform 0.1s; border: 1.5px solid transparent; position: relative;
+    transition: transform 0.1s; border: 1.5px solid transparent;
   }
   .cell:hover { transform: scale(1.05); }
   .cell.na, .cell.empty { background: var(--bg); border-color: var(--border); cursor: default; }
   .cell.na:hover, .cell.empty:hover { transform: none; }
-  .cell.high     { background: #D8F3DC; border-color: #95D5A8; }
-  .cell.mid      { background: #FFF0D6; border-color: #FFCC7A; }
-  .cell.low      { background: #FDE8E8; border-color: #F9AAAA; }
-  .cell.zero     { background: var(--bg); border-color: var(--border); }
-  .cell.winner   { box-shadow: 0 0 0 3px #2D6A4F; border-color: #2D6A4F; z-index: 1; }
+  .cell.high   { background: #D8F3DC; border-color: #95D5A8; }
+  .cell.mid    { background: #FFF0D6; border-color: #FFCC7A; }
+  .cell.low    { background: #FDE8E8; border-color: #F9AAAA; }
+  .cell.zero   { background: var(--bg); border-color: var(--border); }
+  .cell.winner { box-shadow: 0 0 0 3px #2D6A4F; border-color: #2D6A4F; }
 
   .cell-score { font-size: 16px; font-weight: 500; line-height: 1; }
-  .cell.high .cell-score   { color: #2D6A4F; }
-  .cell.mid .cell-score    { color: #B5700A; }
-  .cell.low .cell-score    { color: #9B2C2C; }
-  .cell.zero .cell-score   { color: var(--muted); }
-  .cell.na .cell-score     { color: var(--border); font-size: 18px; }
+  .cell.high .cell-score  { color: #2D6A4F; }
+  .cell.mid .cell-score   { color: #B5700A; }
+  .cell.low .cell-score   { color: #9B2C2C; }
+  .cell.zero .cell-score  { color: var(--muted); }
+  .cell.na .cell-score    { color: var(--border); font-size: 18px; }
   .cell-counts { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.4; text-align: center; }
 
   /* Popup */
@@ -183,25 +157,35 @@
   .lbl-never     { background: var(--never-bg);     color: var(--never); }
   .lbl-blank     { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
   .popup-names { display: flex; flex-wrap: wrap; gap: 6px; }
-  .name-chip {
-    font-size: 13px; padding: 4px 12px; border-radius: 20px;
-    border: 1px solid var(--border); background: var(--bg); color: var(--text);
-  }
+  .name-chip { font-size: 13px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
 
   /* Respondents */
-  .respondents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-bottom: 2rem; }
+  .respondents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
   .respondent-card {
     background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
     padding: 0.65rem 1rem; display: flex; align-items: center; gap: 8px; font-size: 14px;
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
   }
-  .resp-dot { width: 8px; height: 8px; border-radius: 50%; background: #52B788; flex-shrink: 0; }
+  .respondent-card:hover { border-color: var(--accent); }
+  .respondent-card.active { border-color: var(--accent); background: var(--accent-bg); }
+  .resp-dot { width: 8px; height: 8px; border-radius: 50%; background: #52B788; flex-shrink: 0; transition: background 0.15s; }
+  .respondent-card.active .resp-dot { background: var(--accent); }
+  .resp-name { font-weight: 500; }
+  .respondent-card.active .resp-name { color: var(--accent); }
   .resp-date { font-size: 11px; color: var(--muted); }
+
+  .clear-btn {
+    padding: 5px 12px; border-radius: 20px; border: 1px solid var(--never-border);
+    background: var(--never-bg); font-family: 'DM Sans', sans-serif; font-size: 12px;
+    cursor: pointer; color: var(--never); transition: all 0.15s; white-space: nowrap;
+  }
+  .clear-btn:hover { background: var(--never); color: #fff; }
 
   /* Missing members */
   .missing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
   .missing-card {
     background: var(--never-bg); border: 1px solid var(--never-border); border-radius: 10px;
-    padding: 0.65rem 1rem; display: flex; align-items: center; gap: 8px; font-size: 14px;
+    padding: 0.65rem 1rem; display: flex; align-items: center; gap: 8px;
   }
   .missing-dot { width: 8px; height: 8px; border-radius: 50%; background: #E07070; flex-shrink: 0; }
 
@@ -215,7 +199,6 @@
   .copy-btn.copied { border-color: var(--always-border); color: var(--always); background: var(--always-bg); }
   .mail-btn { background: var(--accent); color: #fff; border-color: var(--accent); }
   .mail-btn:hover { opacity: 0.85; color: #fff; }
-
   .all-responded {
     font-size: 14px; color: var(--always); background: var(--always-bg);
     border: 1px solid var(--always-border); border-radius: 10px; padding: 0.75rem 1rem; display: inline-block;
@@ -255,19 +238,18 @@
         <div class="legend-item"><div class="legend-dot" style="background:#FFCC7A"></div>40–69% possible</div>
         <div class="legend-item"><div class="legend-dot" style="background:#F9AAAA"></div>&lt;40% weak</div>
         <div class="legend-item"><div class="legend-dot" style="background:#E2DDD6"></div>no data / n/a</div>
-
+        <div class="legend-item"><div class="legend-dot" style="background:#2D6A4F;border-radius:50%"></div>top slot</div>
       </div>
       <p style="font-size:12px;color:var(--muted);margin-bottom:0.75rem">Click any cell to see who said what.</p>
-
       <div class="grid-wrap"><table id="grid-table"></table></div>
     </div>
 
     <div style="margin-bottom:2rem">
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.4rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;gap:1rem;flex-wrap:wrap">
         <div class="section-title" style="margin-bottom:0">Respondents</div>
-        <button class="filter-reset" id="clear-btn" onclick="resetFilter()" style="display:none">Clear selection</button>
+        <button class="clear-btn" id="clear-btn" onclick="resetFilter()" style="display:none">Clear selection</button>
       </div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:0.75rem">Click names to filter the grid to a subset.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:0.75rem">Click names to filter the grid to a subset. Click again to deselect.</p>
       <div class="respondents-grid" id="respondents-grid"></div>
     </div>
 
@@ -284,7 +266,7 @@
 
 <!-- Popup -->
 <div class="popup-overlay" id="popup-overlay" onclick="maybeClose(event)">
-  <div class="popup" id="popup">
+  <div class="popup">
     <button class="popup-close" onclick="closePopup()">×</button>
     <div class="popup-title" id="popup-title"></div>
     <div class="popup-subtitle" id="popup-subtitle"></div>
@@ -316,7 +298,7 @@ const FRI_SLOTS = ['morning', 'early_aftn'];
 
 let allRows = [];
 let allMatches = [];
-let activeFilter = new Set(); // empty = show all, otherwise filter to these names
+let activeFilter = new Set();
 
 function wid(dayId, slotId) { return `${dayId}_${slotId}`; }
 
@@ -405,26 +387,21 @@ function render() {
   const isFiltered = activeFilter.size > 0;
 
   document.getElementById('subtitle').textContent =
-    `${allRows.length} response${allRows.length !== 1 ? 's' : ''}${isFiltered ? ` · Filtered: ${[...activeFilter].join(', ')}` : ''} · Updated ${new Date().toLocaleTimeString()}`;
+    `${allRows.length} response${allRows.length !== 1 ? 's' : ''}${isFiltered ? ` · Showing ${total} of ${allRows.length}` : ''} · Updated ${new Date().toLocaleTimeString()}`;
 
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Responses</div><div class="stat-value">${allRows.length}</div></div>
     <div class="stat-card"><div class="stat-label">Windows</div><div class="stat-value">22</div></div>
-    <div class="stat-card"><div class="stat-label">${isFiltered ? 'Filtered' : 'Scoring'}</div><div class="stat-value" style="font-size:13px;padding-top:6px">${isFiltered ? `Showing: ${activeFilter}` : 'Always=2 · Sometimes=1'}</div></div>
+    <div class="stat-card"><div class="stat-label">${isFiltered ? 'Viewing' : 'Scoring'}</div><div class="stat-value" style="font-size:13px;padding-top:6px">${isFiltered ? `${activeFilter.size} selected` : 'Always=2 · Sometimes=1'}</div></div>
   `;
 
   // Show/hide clear button
-  const clearBtn = document.getElementById('clear-btn');
-  if (clearBtn) clearBtn.style.display = isFiltered ? 'inline-block' : 'none';
+  document.getElementById('clear-btn').style.display = isFiltered ? 'inline-block' : 'none';
 
-  const { counts, names } = tally(rows);
+  const { counts } = tally(rows);
   const winner = findWinner(counts, total);
 
-  // Show/hide clear button
-  const clearBtn = document.getElementById('clear-btn');
-  if (clearBtn) clearBtn.style.display = isFiltered ? 'inline-block' : 'none';
-
-  // Table
+  // Build grid table
   const thead = `<thead><tr>
     <th>Time slot</th>
     ${DAYS.map(d => `<th>${d.label}</th>`).join('')}
@@ -432,8 +409,7 @@ function render() {
 
   const tbody = SLOTS.map(slot => {
     const cells = DAYS.map(day => {
-      const isFri = day.id === 'fri';
-      if (isFri && !FRI_SLOTS.includes(slot.id)) {
+      if (day.id === 'fri' && !FRI_SLOTS.includes(slot.id)) {
         return `<td><div class="cell na"><div class="cell-score">—</div></div></td>`;
       }
       const k = wid(day.id, slot.id);
@@ -452,10 +428,7 @@ function render() {
         <div class="cell-counts">${countStr}</div>
       </div></td>`;
     }).join('');
-    return `<tr>
-      <td>${slot.name}<span>${slot.time}</span></td>
-      ${cells}
-    </tr>`;
+    return `<tr><td>${slot.name}<span>${slot.time}</span></td>${cells}</tr>`;
   }).join('');
 
   document.getElementById('grid-table').innerHTML = thead + `<tbody>${tbody}</tbody>`;
@@ -468,11 +441,10 @@ function render() {
     respEl.innerHTML = allRows.map(r => {
       const when = new Date(r.submitted_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
       const isActive = activeFilter.has(r.name);
-      return `<div class="respondent-card" onclick="setFilter('${r.name.replace(/'/g, "\\'")}')"
-        style="cursor:pointer;${isActive ? 'border-color:var(--accent);background:var(--accent-bg)' : ''}">
-        <div class="resp-dot" style="${isActive ? 'background:var(--accent)' : ''}"></div>
+      return `<div class="respondent-card${isActive ? ' active' : ''}" onclick="toggleFilter('${r.name.replace(/'/g, "\\'")}')">
+        <div class="resp-dot"></div>
         <div>
-          <div style="${isActive ? 'color:var(--accent);font-weight:500' : ''}">${r.name}</div>
+          <div class="resp-name">${r.name}</div>
           <div class="resp-date">${when}</div>
         </div>
       </div>`;
@@ -483,7 +455,7 @@ function render() {
   renderMissing();
 }
 
-function setFilter(name) {
+function toggleFilter(name) {
   if (activeFilter.has(name)) {
     activeFilter.delete(name);
   } else {
@@ -504,10 +476,9 @@ function renderMissing() {
     return;
   }
   const respondedNames = new Set(allRows.map(r => r.name.trim().toLowerCase()));
-  const missing = allMatches.filter(m => {
-    if (!m.respondent_name) return true;
-    return !respondedNames.has(m.respondent_name.trim().toLowerCase());
-  });
+  const missing = allMatches.filter(m =>
+    !m.respondent_name || !respondedNames.has(m.respondent_name.trim().toLowerCase())
+  );
   if (!missing.length) {
     el.innerHTML = '<div class="all-responded">✓ Everyone has responded!</div>';
     return;
@@ -516,26 +487,22 @@ function renderMissing() {
   const bcc = missingEmails.join(',');
   const subject = encodeURIComponent('Please complete our availability poll');
   const body = encodeURIComponent('Hi,\n\nWe\'re trying to find a regular meeting time that works for everyone. Could you please take a moment to fill out our availability poll?\n\nhttps://misterd7793.github.io/meeting-poll/\n\nThank you!');
-  const mailtoLink = `mailto:?bcc=${bcc}&subject=${subject}&body=${body}`;
-
   el.innerHTML = `
     <div style="display:flex;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap;align-items:center">
       <button class="action-btn copy-btn" id="copy-btn" onclick="copyEmails()">⎘ Copy email addresses</button>
-      <a href="${mailtoLink}"><button class="action-btn mail-btn">✉ Open in mail</button></a>
+      <a href="mailto:?bcc=${bcc}&subject=${subject}&body=${body}"><button class="action-btn mail-btn">✉ Open in mail</button></a>
       <span style="font-size:12px;color:var(--muted)">${missing.length} still needed</span>
     </div>
     <div class="missing-grid">${missing.map(m => `
       <div class="missing-card">
         <div class="missing-dot"></div>
         <div>
-          ${m.groups_io_name && m.groups_io_name !== m.groups_io_email
-            ? `<div style="font-size:13px;font-weight:500">${m.groups_io_name}</div>` : ''}
+          ${m.groups_io_name && m.groups_io_name !== m.groups_io_email ? `<div style="font-size:13px;font-weight:500">${m.groups_io_name}</div>` : ''}
           <div style="font-size:12px;color:var(--muted)">${m.groups_io_email}</div>
         </div>
       </div>`).join('')}
     </div>
     <div id="copy-confirm" style="font-size:12px;color:var(--always);margin-top:0.5rem;min-height:16px"></div>`;
-
   window._missingEmails = missingEmails;
 }
 
@@ -543,9 +510,9 @@ function copyEmails() {
   const emails = (window._missingEmails || []).join(', ');
   navigator.clipboard.writeText(emails).then(() => {
     const btn = document.getElementById('copy-btn');
-    const confirm = document.getElementById('copy-confirm');
+    const conf = document.getElementById('copy-confirm');
     if (btn) { btn.classList.add('copied'); btn.textContent = '✓ Copied!'; }
-    if (confirm) confirm.textContent = `${(window._missingEmails||[]).length} address${(window._missingEmails||[]).length !== 1 ? 'es' : ''} copied to clipboard`;
+    if (conf) conf.textContent = `${(window._missingEmails||[]).length} addresses copied to clipboard`;
     setTimeout(() => {
       if (btn) { btn.classList.remove('copied'); btn.textContent = '⎘ Copy email addresses'; }
     }, 2500);
@@ -562,17 +529,15 @@ function openPopup(k) {
     const bucket = (v === 'always' || v === 'sometimes' || v === 'never') ? v : 'blank';
     c[bucket]++; n[bucket].push(row.name);
   });
-
   const idx = k.indexOf('_');
-  const dayId = k.substring(0, idx);
-  const slotId = k.substring(idx + 1);
-  const day  = DAYS.find(d => d.id === dayId);
-  const slot = SLOTS.find(s => s.id === slotId);
+  const day  = DAYS.find(d => d.id === k.substring(0, idx));
+  const slot = SLOTS.find(s => s.id === k.substring(idx + 1));
   if (!day || !slot) return;
   const s = Math.round(calcScore(c, total));
 
   document.getElementById('popup-title').textContent = `${day.label} · ${slot.name}`;
-  document.getElementById('popup-subtitle').textContent = `${slot.time} · Score: ${s}%${activeFilter.size ? ` · ${activeFilter.size} selected` : ''}`;
+  document.getElementById('popup-subtitle').textContent =
+    `${slot.time} · Score: ${s}%${activeFilter.size ? ` · ${activeFilter.size} selected` : ''}`;
 
   const ap = total ? c.always/total*100 : 0;
   const sp = total ? c.sometimes/total*100 : 0;
@@ -582,21 +547,19 @@ function openPopup(k) {
     <div class="psb-always"    style="flex:${ap}"></div>
     <div class="psb-sometimes" style="flex:${sp}"></div>
     <div class="psb-never"     style="flex:${np}"></div>
-    <div class="psb-blank"     style="flex:${bp}"></div>
-  `;
+    <div class="psb-blank"     style="flex:${bp}"></div>`;
 
-  const groups = [
+  document.getElementById('popup-body').innerHTML = [
     { key: 'always',    label: 'Always',    cls: 'lbl-always' },
     { key: 'sometimes', label: 'Sometimes', cls: 'lbl-sometimes' },
     { key: 'never',     label: 'Never',     cls: 'lbl-never' },
     { key: 'blank',     label: 'No answer', cls: 'lbl-blank' },
-  ];
-  document.getElementById('popup-body').innerHTML = groups
-    .filter(g => n[g.key].length)
-    .map(g => `<div class="popup-group">
+  ].filter(g => n[g.key].length).map(g =>
+    `<div class="popup-group">
       <div class="popup-group-label ${g.cls}">${g.label} (${n[g.key].length})</div>
       <div class="popup-names">${n[g.key].map(nm => `<div class="name-chip">${nm}</div>`).join('')}</div>
-    </div>`).join('');
+    </div>`
+  ).join('');
 
   document.getElementById('popup-overlay').classList.add('open');
 }

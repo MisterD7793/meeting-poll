@@ -539,7 +539,7 @@ async function saveMatches() {
       respondent_name: matches[m.email] || null,
     }));
 
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/member_matches`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/member_matches?on_conflict=groups_io_email`, {
       method: 'POST',
       headers: { ...hdrs, 'Prefer': 'resolution=merge-duplicates' },
       body: JSON.stringify(upserts),

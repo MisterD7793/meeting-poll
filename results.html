@@ -23,6 +23,7 @@
     --never-border: #F9AAAA;
     --accent: #2C4A7C;
     --accent-bg: #E8EDF5;
+    --accent-border: #A8BFDF;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -34,174 +35,103 @@
   }
   .container { max-width: 960px; margin: 0 auto; }
 
-  .login-wrap {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  /* Login */
+  .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
   .login-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2.5rem 2rem;
-    width: 100%;
-    max-width: 360px;
-    text-align: center;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 2.5rem 2rem; width: 100%; max-width: 360px; text-align: center;
   }
-  .login-card h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.6rem;
-    font-weight: 400;
-    margin-bottom: 0.4rem;
-  }
+  .login-card h1 { font-family: 'DM Serif Display', serif; font-size: 1.6rem; font-weight: 400; margin-bottom: 0.4rem; }
   .login-card p { color: var(--muted); font-size: 14px; margin-bottom: 1.5rem; }
   .login-card input {
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    background: var(--bg);
-    color: var(--text);
-    outline: none;
-    margin-bottom: 0.75rem;
-    text-align: center;
-    letter-spacing: 0.1em;
+    width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; background: var(--bg); color: var(--text);
+    outline: none; margin-bottom: 0.75rem; text-align: center; letter-spacing: 0.1em;
   }
   .login-card input:focus { border-color: var(--accent); }
   .login-btn {
-    width: 100%;
-    padding: 11px;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.15s;
+    width: 100%; padding: 11px; background: var(--accent); color: #fff; border: none;
+    border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+    cursor: pointer; transition: opacity 0.15s;
   }
   .login-btn:hover { opacity: 0.85; }
   .login-error { color: var(--never); font-size: 13px; margin-top: 0.5rem; min-height: 18px; }
 
+  /* Dashboard */
   #dashboard { display: none; }
-
   .dash-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;
   }
-  .dash-header h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2rem;
-    font-weight: 400;
-  }
+  .dash-header h1 { font-family: 'DM Serif Display', serif; font-size: 2rem; font-weight: 400; }
   .dash-header p { color: var(--muted); font-size: 14px; margin-top: 0.25rem; }
   .refresh-btn {
-    padding: 8px 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--surface);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--muted);
-    transition: all 0.15s;
-    white-space: nowrap;
+    padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; color: var(--muted);
+    transition: all 0.15s; white-space: nowrap;
   }
   .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-    margin-bottom: 2rem;
-  }
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.9rem 1rem;
-  }
+  /* Stats */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 2rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1rem; }
   .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
   .stat-value { font-size: 22px; font-weight: 500; }
 
-  .section-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.2rem;
-    font-weight: 400;
-    margin-bottom: 0.75rem;
+  /* Section title */
+  .section-title { font-family: 'DM Serif Display', serif; font-size: 1.2rem; font-weight: 400; margin-bottom: 0.75rem; }
+
+  /* Subset filter */
+  .filter-bar {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; align-items: center;
+    gap: 0.75rem; flex-wrap: wrap;
   }
-  .legend {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.5rem;
-    font-size: 12px;
-    color: var(--muted);
+  .filter-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .filter-chips { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+  .filter-chip {
+    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+    background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 12px;
+    cursor: pointer; color: var(--muted); transition: all 0.15s; user-select: none;
   }
+  .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .filter-reset {
+    padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+    background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 12px;
+    cursor: pointer; color: var(--muted); transition: all 0.15s; white-space: nowrap;
+  }
+  .filter-reset:hover { border-color: var(--never); color: var(--never); }
+  .filter-active-note { font-size: 12px; color: var(--accent); font-weight: 500; }
+
+  /* Legend */
+  .legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; font-size: 12px; color: var(--muted); }
   .legend-item { display: flex; align-items: center; gap: 5px; }
   .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 
+  /* Grid table */
   .grid-wrap {
-    overflow-x: auto;
-    margin-bottom: 2.5rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    overflow-x: auto; margin-bottom: 2.5rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 12px;
   }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   thead th {
-    padding: 0.75rem 0.5rem;
-    text-align: center;
-    font-weight: 500;
-    font-size: 13px;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
+    padding: 0.75rem 0.5rem; text-align: center; font-weight: 500; font-size: 13px;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
   }
-  thead th:first-child {
-    text-align: left;
-    padding-left: 1.25rem;
-    width: 145px;
-  }
+  thead th:first-child { text-align: left; padding-left: 1.25rem; width: 145px; }
   tbody tr:not(:last-child) td { border-bottom: 1px solid var(--border); }
-  tbody td {
-    padding: 6px 4px;
-    vertical-align: middle;
-    text-align: center;
-  }
+  tbody td { padding: 6px 4px; vertical-align: middle; text-align: center; }
   tbody td:first-child {
-    text-align: left;
-    padding-left: 1.25rem;
-    font-weight: 500;
-    font-size: 13px;
-    white-space: nowrap;
+    text-align: left; padding-left: 1.25rem; font-weight: 500; font-size: 13px; white-space: nowrap;
   }
-  tbody td:first-child span {
-    display: block;
-    font-weight: 400;
-    font-size: 11px;
-    color: var(--muted);
-  }
+  tbody td:first-child span { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
 
+  /* Cell */
   .cell {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-width: 88px;
-    border-radius: 8px;
-    padding: 7px 4px;
-    cursor: pointer;
-    transition: transform 0.1s;
-    border: 1px solid transparent;
+    display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; min-width: 88px; border-radius: 8px; padding: 7px 4px; cursor: pointer;
+    transition: transform 0.1s; border: 1.5px solid transparent; position: relative;
   }
   .cell:hover { transform: scale(1.05); }
   .cell.na, .cell.empty { background: var(--bg); border-color: var(--border); cursor: default; }
@@ -210,156 +140,77 @@
   .cell.mid      { background: #FFF0D6; border-color: #FFCC7A; }
   .cell.low      { background: #FDE8E8; border-color: #F9AAAA; }
   .cell.zero     { background: var(--bg); border-color: var(--border); }
+  .cell.winner   { box-shadow: 0 0 0 3px #2D6A4F; border-color: #2D6A4F; z-index: 1; }
 
   .cell-score { font-size: 16px; font-weight: 500; line-height: 1; }
   .cell.high .cell-score   { color: #2D6A4F; }
   .cell.mid .cell-score    { color: #B5700A; }
   .cell.low .cell-score    { color: #9B2C2C; }
   .cell.zero .cell-score   { color: var(--muted); }
-  .cell.na .cell-score     { color: var(--muted); }
-
-  .cell-counts {
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 3px;
-    line-height: 1.4;
-    text-align: center;
-  }
+  .cell.na .cell-score     { color: var(--border); font-size: 18px; }
+  .cell-counts { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.4; text-align: center; }
+  .winner-crown { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 13px; line-height: 1; }
 
   /* Popup */
   .popup-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(26,23,20,0.3);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
+    display: none; position: fixed; inset: 0; background: rgba(26,23,20,0.3);
+    z-index: 200; align-items: center; justify-content: center; padding: 1rem;
   }
   .popup-overlay.open { display: flex; }
   .popup {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.5rem;
-    width: 100%;
-    max-width: 400px;
-    position: relative;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.5rem; width: 100%; max-width: 400px; position: relative;
   }
   .popup-close {
-    position: absolute;
-    top: 0.9rem; right: 0.9rem;
-    background: none;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    color: var(--muted);
-    line-height: 1;
-    padding: 2px 6px;
-    border-radius: 4px;
+    position: absolute; top: 0.9rem; right: 0.9rem; background: none; border: none;
+    font-size: 22px; cursor: pointer; color: var(--muted); line-height: 1; padding: 2px 6px; border-radius: 4px;
   }
   .popup-close:hover { background: var(--bg); }
-  .popup-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.15rem;
-    font-weight: 400;
-    margin-bottom: 0.2rem;
-  }
+  .popup-title { font-family: 'DM Serif Display', serif; font-size: 1.15rem; font-weight: 400; margin-bottom: 0.2rem; }
   .popup-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
-
-  .popup-score-bar {
-    display: flex;
-    height: 6px;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 1.25rem;
-  }
+  .popup-score-bar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 1.25rem; }
   .psb-always    { background: #52B788; }
   .psb-sometimes { background: #F4A621; }
   .psb-never     { background: #E07070; }
   .psb-blank     { background: var(--border); }
-
   .popup-group { margin-bottom: 1rem; }
   .popup-group:last-child { margin-bottom: 0; }
   .popup-group-label {
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    margin-bottom: 0.5rem;
-    padding: 3px 8px;
-    border-radius: 4px;
-    display: inline-block;
+    font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em;
+    margin-bottom: 0.5rem; padding: 3px 8px; border-radius: 4px; display: inline-block;
   }
   .lbl-always    { background: var(--always-bg);    color: var(--always); }
   .lbl-sometimes { background: var(--sometimes-bg); color: var(--sometimes); }
   .lbl-never     { background: var(--never-bg);     color: var(--never); }
   .lbl-blank     { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
-
   .popup-names { display: flex; flex-wrap: wrap; gap: 6px; }
   .name-chip {
-    font-size: 13px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text);
+    font-size: 13px; padding: 4px 12px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text);
   }
 
-  .respondents-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 8px;
-    margin-bottom: 2rem;
-  }
+  /* Respondents */
+  .respondents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-bottom: 2rem; }
   .respondent-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.65rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.65rem 1rem; display: flex; align-items: center; gap: 8px; font-size: 14px;
   }
   .resp-dot { width: 8px; height: 8px; border-radius: 50%; background: #52B788; flex-shrink: 0; }
   .resp-date { font-size: 11px; color: var(--muted); }
 
-  .no-data { color: var(--muted); font-size: 14px; padding: 1rem 0; }
-
-  .missing-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 8px;
-  }
+  /* Missing members */
+  .missing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
   .missing-card {
-    background: var(--never-bg);
-    border: 1px solid var(--never-border);
-    border-radius: 10px;
-    padding: 0.65rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
+    background: var(--never-bg); border: 1px solid var(--never-border); border-radius: 10px;
+    padding: 0.65rem 1rem; display: flex; align-items: center; gap: 8px; font-size: 14px;
   }
   .missing-dot { width: 8px; height: 8px; border-radius: 50%; background: #E07070; flex-shrink: 0; }
-  .missing-email { font-size: 11px; color: var(--never); margin-top: 1px; opacity: 0.8; }
+
   .action-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    color: var(--text);
-    transition: all 0.15s;
-    white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+    border-radius: 8px; border: 1px solid var(--border); background: var(--surface);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; color: var(--text); transition: all 0.15s; white-space: nowrap;
   }
   .action-btn:hover { border-color: var(--accent); color: var(--accent); }
   .copy-btn.copied { border-color: var(--always-border); color: var(--always); background: var(--always-bg); }
@@ -367,14 +218,10 @@
   .mail-btn:hover { opacity: 0.85; color: #fff; }
 
   .all-responded {
-    font-size: 14px;
-    color: var(--always);
-    background: var(--always-bg);
-    border: 1px solid var(--always-border);
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    display: inline-block;
+    font-size: 14px; color: var(--always); background: var(--always-bg);
+    border: 1px solid var(--always-border); border-radius: 10px; padding: 0.75rem 1rem; display: inline-block;
   }
+  .no-data { color: var(--muted); font-size: 14px; padding: 1rem 0; }
 </style>
 </head>
 <body>
@@ -409,13 +256,23 @@
         <div class="legend-item"><div class="legend-dot" style="background:#FFCC7A"></div>40–69% possible</div>
         <div class="legend-item"><div class="legend-dot" style="background:#F9AAAA"></div>&lt;40% weak</div>
         <div class="legend-item"><div class="legend-dot" style="background:#E2DDD6"></div>no data / n/a</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2D6A4F;border-radius:50%"></div>top slot</div>
       </div>
       <p style="font-size:12px;color:var(--muted);margin-bottom:0.75rem">Click any cell to see who said what.</p>
+
+      <div class="filter-bar" id="filter-bar" style="display:none">
+        <span class="filter-label">Filter by respondent:</span>
+        <div class="filter-chips" id="filter-chips"></div>
+        <button class="filter-reset" onclick="resetFilter()" id="clear-btn">Clear selection</button>
+        <span class="filter-active-note" id="filter-note"></span>
+      </div>
+
       <div class="grid-wrap"><table id="grid-table"></table></div>
     </div>
 
-    <div>
+    <div style="margin-bottom:2rem">
       <div class="section-title">Respondents</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:0.75rem">Click a name to filter the grid by that person's availability.</p>
       <div class="respondents-grid" id="respondents-grid"></div>
     </div>
 
@@ -424,12 +281,13 @@
         <div class="section-title" style="margin-bottom:0">Still needed</div>
         <a href="match.html" style="font-size:12px;color:var(--accent);text-decoration:none">Manage matches &rarr;</a>
       </div>
-      <div id="missing-grid"></div>
+      <div id="missing-section"></div>
     </div>
 
   </div>
 </div>
 
+<!-- Popup -->
 <div class="popup-overlay" id="popup-overlay" onclick="maybeClose(event)">
   <div class="popup" id="popup">
     <button class="popup-close" onclick="closePopup()">×</button>
@@ -446,9 +304,9 @@ const SUPABASE_URL = 'https://eqpqtswfkfmukzuhenjt.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcHF0c3dma2ZtdWt6dWhlbmp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1OTgwNzUsImV4cCI6MjA5NDE3NDA3NX0.jk1dbvSxwoSiOFFA7CeNJbJItXmJeDebU2D9rGtfvVA';
 
 const SLOTS = [
-  { id: 'morning',    name: 'Morning',                time: '9–11 am' },
-  { id: 'early_aftn', name: 'Early Afternoon',        time: '12–3 pm' },
-  { id: 'afternoon',  name: 'Afternoon',              time: '3–6 pm' },
+  { id: 'morning',    name: 'Morning',               time: '9–11 am' },
+  { id: 'early_aftn', name: 'Early Afternoon',       time: '12–3 pm' },
+  { id: 'afternoon',  name: 'Afternoon',             time: '3–6 pm' },
   { id: 'evening',    name: 'Evening / After Dinner', time: '8–10 pm' },
 ];
 const DAYS = [
@@ -462,6 +320,8 @@ const DAYS = [
 const FRI_SLOTS = ['morning', 'early_aftn'];
 
 let allRows = [];
+let allMatches = [];
+let activeFilter = new Set(); // empty = show all, otherwise filter to these names
 
 function wid(dayId, slotId) { return `${dayId}_${slotId}`; }
 
@@ -489,8 +349,6 @@ function checkPassword() {
 }
 document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
 
-let allMatches = [];
-
 async function loadData() {
   try {
     const [responsesRes, matchesRes] = await Promise.all([
@@ -503,10 +361,15 @@ async function loadData() {
     ]);
     allRows = await responsesRes.json();
     allMatches = await matchesRes.json();
-    render(allRows, allMatches);
+    render();
   } catch(e) {
     document.getElementById('subtitle').textContent = 'Error loading data.';
   }
+}
+
+function activeRows() {
+  if (!activeFilter.size) return allRows;
+  return allRows.filter(r => activeFilter.has(r.name));
 }
 
 function tally(rows) {
@@ -531,18 +394,47 @@ function tally(rows) {
   return { counts, names };
 }
 
-function render(rows, matches) {
+function findWinner(counts, total) {
+  if (!total) return null;
+  let best = null, bestScore = -1;
+  Object.entries(counts).forEach(([k, c]) => {
+    const s = calcScore(c, total);
+    if (s > bestScore) { bestScore = s; best = k; }
+  });
+  return best;
+}
+
+function render() {
+  const rows = activeRows();
   const total = rows.length;
+  const isFiltered = activeFilter.size > 0;
+
   document.getElementById('subtitle').textContent =
-    `${total} response${total !== 1 ? 's' : ''} · Updated ${new Date().toLocaleTimeString()}`;
+    `${allRows.length} response${allRows.length !== 1 ? 's' : ''}${isFiltered ? ` · Filtered: ${[...activeFilter].join(', ')}` : ''} · Updated ${new Date().toLocaleTimeString()}`;
 
   document.getElementById('stats-row').innerHTML = `
-    <div class="stat-card"><div class="stat-label">Responses</div><div class="stat-value">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Responses</div><div class="stat-value">${allRows.length}</div></div>
     <div class="stat-card"><div class="stat-label">Windows</div><div class="stat-value">22</div></div>
-    <div class="stat-card"><div class="stat-label">Scoring</div><div class="stat-value" style="font-size:13px;padding-top:6px">Always=2 · Sometimes=1</div></div>
+    <div class="stat-card"><div class="stat-label">${isFiltered ? 'Filtered' : 'Scoring'}</div><div class="stat-value" style="font-size:13px;padding-top:6px">${isFiltered ? `Showing: ${activeFilter}` : 'Always=2 · Sometimes=1'}</div></div>
   `;
 
   const { counts, names } = tally(rows);
+  const winner = findWinner(counts, total);
+
+  // Filter bar
+  const filterBar = document.getElementById('filter-bar');
+  const filterChips = document.getElementById('filter-chips');
+  const filterNote = document.getElementById('filter-note');
+  if (allRows.length) {
+    filterBar.style.display = 'flex';
+    const respondentNames = [...new Set(allRows.map(r => r.name))].sort();
+    filterChips.innerHTML = respondentNames.map(name =>
+      `<div class="filter-chip ${activeFilter.has(name) ? 'active' : ''}" onclick="setFilter('${name.replace(/'/g, "\\'")}')">${name}</div>`
+    ).join('');
+    filterNote.textContent = isFiltered ? `${total} of ${allRows.length} respondent${allRows.length !== 1 ? 's' : ''}` : '';
+  } else {
+    filterBar.style.display = 'none';
+  }
 
   // Table
   const thead = `<thead><tr>
@@ -554,19 +446,21 @@ function render(rows, matches) {
     const cells = DAYS.map(day => {
       const isFri = day.id === 'fri';
       if (isFri && !FRI_SLOTS.includes(slot.id)) {
-        return `<td><div class="cell na"><div class="cell-score" style="font-size:18px;color:var(--border)">—</div></div></td>`;
+        return `<td><div class="cell na"><div class="cell-score">—</div></div></td>`;
       }
       const k = wid(day.id, slot.id);
       const c = counts[k];
       const s = calcScore(c, total);
       const cls = cellClass(s, total);
+      const isWinner = k === winner && total > 0;
       const scoreStr = total ? Math.round(s) + '%' : '—';
       const parts = [];
       if (c.always)    parts.push(`${c.always}✓`);
       if (c.sometimes) parts.push(`${c.sometimes}~`);
       if (c.never)     parts.push(`${c.never}✗`);
       const countStr = parts.length ? parts.join(' · ') : (total ? 'none' : '');
-      return `<td><div class="cell ${cls}" onclick="openPopup('${k}')">
+      return `<td><div class="cell ${cls}${isWinner ? ' winner' : ''}" onclick="openPopup('${k}')">
+        ${isWinner ? '<span class="winner-crown">★</span>' : ''}
         <div class="cell-score">${scoreStr}</div>
         <div class="cell-counts">${countStr}</div>
       </div></td>`;
@@ -580,82 +474,118 @@ function render(rows, matches) {
   document.getElementById('grid-table').innerHTML = thead + `<tbody>${tbody}</tbody>`;
 
   // Respondents
-  const el = document.getElementById('respondents-grid');
-  if (!total) {
-    el.innerHTML = '<div class="no-data">No responses yet.</div>';
+  const respEl = document.getElementById('respondents-grid');
+  if (!allRows.length) {
+    respEl.innerHTML = '<div class="no-data">No responses yet.</div>';
   } else {
-    el.innerHTML = rows.map(r => {
+    respEl.innerHTML = allRows.map(r => {
       const when = new Date(r.submitted_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-      return `<div class="respondent-card">
-        <div class="resp-dot"></div>
-        <div><div>${r.name}</div><div class="resp-date">${when}</div></div>
+      const isActive = activeFilter.has(r.name);
+      return `<div class="respondent-card" onclick="setFilter('${r.name.replace(/'/g, "\\'")}')"
+        style="cursor:pointer;${isActive ? 'border-color:var(--accent);background:var(--accent-bg)' : ''}">
+        <div class="resp-dot" style="${isActive ? 'background:var(--accent)' : ''}"></div>
+        <div>
+          <div style="${isActive ? 'color:var(--accent);font-weight:500' : ''}">${r.name}</div>
+          <div class="resp-date">${when}</div>
+        </div>
       </div>`;
     }).join('');
   }
 
   // Missing members
-  const missingEl = document.getElementById('missing-grid');
-  if (!matches || !matches.length) {
-    missingEl.innerHTML = '<div class="no-data">No member matches set up yet. <a href="match.html" style="color:var(--accent)">Set up matches →</a></div>';
+  renderMissing();
+}
+
+function setFilter(name) {
+  if (activeFilter.has(name)) {
+    activeFilter.delete(name);
   } else {
-    const respondedNames = new Set(rows.map(r => r.name.trim().toLowerCase()));
-    const missing = matches.filter(m => {
-      if (!m.respondent_name) return true;
-      return !respondedNames.has(m.respondent_name.trim().toLowerCase());
-    });
-    if (!missing.length) {
-      missingEl.innerHTML = '<div class="all-responded">✓ Everyone has responded!</div>';
-    } else {
-      const missingEmails = missing.map(m => m.groups_io_email).filter(Boolean);
-      const bcc = missingEmails.join(',');
-      const subject = encodeURIComponent('Please complete our availability poll');
-      const body = encodeURIComponent('Hi,\n\nWe\'re trying to find a regular meeting time that works for everyone. Could you please take a moment to fill out our availability poll?\n\nhttps://misterd7793.github.io/meeting-poll/\n\nThank you!');
-      const mailtoLink = `mailto:?bcc=${bcc}&subject=${subject}&body=${body}`;
-
-      missingEl.innerHTML = `
-        <div style="display:flex;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap">
-          <button onclick="copyEmails()" class="action-btn copy-btn" id="copy-btn">
-            <span>⎘</span> Copy email addresses
-          </button>
-          <a href="${mailtoLink}">
-            <button class="action-btn mail-btn">
-              <span>✉</span> Open in mail
-            </button>
-          </a>
-        </div>
-        <div class="missing-grid">` + missing.map(m => `
-          <div class="missing-card">
-            <div class="missing-dot"></div>
-            <div>
-              <div>${m.groups_io_name && m.groups_io_name !== m.groups_io_email ? m.groups_io_name : ''}</div>
-              <div class="missing-email" style="color:var(--text);opacity:1;font-size:12px">${m.groups_io_email}</div>
-            </div>
-          </div>`).join('') + `</div>
-        <div id="copy-confirm" style="font-size:12px;color:var(--always);margin-top:0.5rem;min-height:16px"></div>`;
-
-      window._missingEmails = missingEmails;
-    }
+    activeFilter.add(name);
   }
+  render();
+}
+
+function resetFilter() {
+  activeFilter = new Set();
+  render();
+}
+
+function renderMissing() {
+  const el = document.getElementById('missing-section');
+  if (!allMatches || !allMatches.length) {
+    el.innerHTML = '<div class="no-data">No member matches set up yet. <a href="match.html" style="color:var(--accent)">Set up matches →</a></div>';
+    return;
+  }
+  const respondedNames = new Set(allRows.map(r => r.name.trim().toLowerCase()));
+  const missing = allMatches.filter(m => {
+    if (!m.respondent_name) return true;
+    return !respondedNames.has(m.respondent_name.trim().toLowerCase());
+  });
+  if (!missing.length) {
+    el.innerHTML = '<div class="all-responded">✓ Everyone has responded!</div>';
+    return;
+  }
+  const missingEmails = missing.map(m => m.groups_io_email).filter(Boolean);
+  const bcc = missingEmails.join(',');
+  const subject = encodeURIComponent('Please complete our availability poll');
+  const body = encodeURIComponent('Hi,\n\nWe\'re trying to find a regular meeting time that works for everyone. Could you please take a moment to fill out our availability poll?\n\nhttps://misterd7793.github.io/meeting-poll/\n\nThank you!');
+  const mailtoLink = `mailto:?bcc=${bcc}&subject=${subject}&body=${body}`;
+
+  el.innerHTML = `
+    <div style="display:flex;gap:8px;margin-bottom:0.75rem;flex-wrap:wrap;align-items:center">
+      <button class="action-btn copy-btn" id="copy-btn" onclick="copyEmails()">⎘ Copy email addresses</button>
+      <a href="${mailtoLink}"><button class="action-btn mail-btn">✉ Open in mail</button></a>
+      <span style="font-size:12px;color:var(--muted)">${missing.length} still needed</span>
+    </div>
+    <div class="missing-grid">${missing.map(m => `
+      <div class="missing-card">
+        <div class="missing-dot"></div>
+        <div>
+          ${m.groups_io_name && m.groups_io_name !== m.groups_io_email
+            ? `<div style="font-size:13px;font-weight:500">${m.groups_io_name}</div>` : ''}
+          <div style="font-size:12px;color:var(--muted)">${m.groups_io_email}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div id="copy-confirm" style="font-size:12px;color:var(--always);margin-top:0.5rem;min-height:16px"></div>`;
+
+  window._missingEmails = missingEmails;
+}
+
+function copyEmails() {
+  const emails = (window._missingEmails || []).join(', ');
+  navigator.clipboard.writeText(emails).then(() => {
+    const btn = document.getElementById('copy-btn');
+    const confirm = document.getElementById('copy-confirm');
+    if (btn) { btn.classList.add('copied'); btn.textContent = '✓ Copied!'; }
+    if (confirm) confirm.textContent = `${(window._missingEmails||[]).length} address${(window._missingEmails||[]).length !== 1 ? 'es' : ''} copied to clipboard`;
+    setTimeout(() => {
+      if (btn) { btn.classList.remove('copied'); btn.textContent = '⎘ Copy email addresses'; }
+    }, 2500);
+  });
 }
 
 function openPopup(k) {
-  const total = allRows.length;
+  const rows = activeRows();
+  const total = rows.length;
   const c = { always: 0, sometimes: 0, never: 0, blank: 0 };
   const n = { always: [], sometimes: [], never: [], blank: [] };
-  allRows.forEach(row => {
+  rows.forEach(row => {
     const v = (row.availability || {})[k];
     const bucket = (v === 'always' || v === 'sometimes' || v === 'never') ? v : 'blank';
     c[bucket]++; n[bucket].push(row.name);
   });
 
-  const idx = k.indexOf("_"); const dayId = k.substring(0, idx); const slotId = k.substring(idx + 1);
+  const idx = k.indexOf('_');
+  const dayId = k.substring(0, idx);
+  const slotId = k.substring(idx + 1);
   const day  = DAYS.find(d => d.id === dayId);
   const slot = SLOTS.find(s => s.id === slotId);
-  if (!day || !slot) { console.error("Unknown key:", k, dayId, slotId); return; }
+  if (!day || !slot) return;
   const s = Math.round(calcScore(c, total));
 
   document.getElementById('popup-title').textContent = `${day.label} · ${slot.name}`;
-  document.getElementById('popup-subtitle').textContent = `${slot.time} · Score: ${s}%`;
+  document.getElementById('popup-subtitle').textContent = `${slot.time} · Score: ${s}%${activeFilter.size ? ` · ${activeFilter.size} selected` : ''}`;
 
   const ap = total ? c.always/total*100 : 0;
   const sp = total ? c.sometimes/total*100 : 0;
@@ -682,19 +612,6 @@ function openPopup(k) {
     </div>`).join('');
 
   document.getElementById('popup-overlay').classList.add('open');
-}
-
-function copyEmails() {
-  const emails = (window._missingEmails || []).join(', ');
-  navigator.clipboard.writeText(emails).then(() => {
-    const btn = document.getElementById('copy-btn');
-    const confirm = document.getElementById('copy-confirm');
-    if (btn) { btn.classList.add('copied'); btn.innerHTML = '<span>✓</span> Copied!'; }
-    if (confirm) confirm.textContent = `${(window._missingEmails||[]).length} address${(window._missingEmails||[]).length !== 1 ? 'es' : ''} copied to clipboard`;
-    setTimeout(() => {
-      if (btn) { btn.classList.remove('copied'); btn.innerHTML = '<span>⎘</span> Copy email addresses'; }
-    }, 2500);
-  });
 }
 
 function maybeClose(e) { if (e.target.id === 'popup-overlay') closePopup(); }

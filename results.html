@@ -71,6 +71,13 @@
     transition: all 0.15s; white-space: nowrap;
   }
   .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  #poll-select {
+    padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; color: var(--text);
+    max-width: 220px;
+  }
+  .poll-closed-note { font-size: 12px; color: var(--muted); margin-bottom: 0.75rem; }
 
   /* Stats */
   .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 2rem; }
@@ -173,6 +180,7 @@
   .resp-name { font-weight: 500; }
   .respondent-card.active .resp-name { color: var(--accent); }
   .resp-date { font-size: 11px; color: var(--muted); }
+  .resp-email { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   .clear-btn {
     padding: 5px 12px; border-radius: 20px; border: 1px solid var(--never-border);
@@ -194,6 +202,7 @@
     border-radius: 8px; border: 1px solid var(--border); background: var(--surface);
     font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
     cursor: pointer; color: var(--text); transition: all 0.15s; white-space: nowrap;
+    text-decoration: none;
   }
   .action-btn:hover { border-color: var(--accent); color: var(--accent); }
   .copy-btn.copied { border-color: var(--always-border); color: var(--always); background: var(--always-bg); }
@@ -226,7 +235,12 @@
         <h1>Availability results</h1>
         <p id="subtitle">Loading…</p>
       </div>
-      <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+      <div class="header-actions">
+        <a href="index.html" class="action-btn">← Back to poll</a>
+        <select id="poll-select" onchange="switchPoll(this.value)"></select>
+        <button class="action-btn" onclick="saveAndStartNewPoll()">💾 Save &amp; start new poll</button>
+        <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+      </div>
     </div>
 
     <div class="stats-row" id="stats-row"></div>
@@ -296,9 +310,21 @@ const DAYS = [
 ];
 const FRI_SLOTS = ['morning', 'early_aftn'];
 
+const hdrs = {
+  'apikey': SUPABASE_ANON_KEY,
+  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+  'Content-Type': 'application/json',
+};
+
 let allRows = [];
 let allMatches = [];
 let activeFilter = new Set();
+let polls = [];
+let viewingPollId = null;
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 function wid(dayId, slotId) { return `${dayId}_${slotId}`; }
 
@@ -326,21 +352,82 @@ function checkPassword() {
 }
 document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
 
+function activePoll() { return polls.find(p => !p.closed_at) || null; }
+function viewingPoll() { return polls.find(p => p.id === viewingPollId) || null; }
+
+async function loadPolls() {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/polls?select=*&order=created_at.desc`, { headers: hdrs });
+  polls = await res.json();
+  const stillExists = polls.some(p => p.id === viewingPollId);
+  if (!viewingPollId || !stillExists) {
+    const active = activePoll();
+    viewingPollId = active ? active.id : (polls[0] ? polls[0].id : null);
+  }
+}
+
 async function loadData() {
   try {
+    await loadPolls();
+    if (!viewingPollId) {
+      allRows = []; allMatches = [];
+      document.getElementById('subtitle').textContent = 'No poll has been created yet.';
+      render();
+      return;
+    }
     const [responsesRes, matchesRes] = await Promise.all([
-      fetch(`${SUPABASE_URL}/rest/v1/responses?select=*&order=submitted_at.asc`, {
-        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-      }),
-      fetch(`${SUPABASE_URL}/rest/v1/member_matches?select=*`, {
-        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-      }),
+      fetch(`${SUPABASE_URL}/rest/v1/responses?select=*&poll_id=eq.${viewingPollId}&order=submitted_at.asc`, { headers: hdrs }),
+      fetch(`${SUPABASE_URL}/rest/v1/member_matches?select=*`, { headers: hdrs }),
     ]);
     allRows = await responsesRes.json();
     allMatches = await matchesRes.json();
     render();
   } catch(e) {
     document.getElementById('subtitle').textContent = 'Error loading data.';
+  }
+}
+
+function renderPollSelect() {
+  const sel = document.getElementById('poll-select');
+  sel.innerHTML = polls.map(p => {
+    const label = `${p.name || 'Untitled poll'}${!p.closed_at ? ' (active)' : ''}`;
+    return `<option value="${p.id}" ${p.id === viewingPollId ? 'selected' : ''}>${escHtml(label)}</option>`;
+  }).join('');
+}
+
+function switchPoll(id) {
+  viewingPollId = id;
+  activeFilter = new Set();
+  loadData();
+}
+
+async function saveAndStartNewPoll() {
+  const current = activePoll();
+  if (!current) { alert('No active poll to close.'); return; }
+
+  const defaultName = `Poll — ${new Date(current.created_at).toLocaleDateString()} to ${new Date().toLocaleDateString()}`;
+  const name = window.prompt(`Name this poll before archiving it (${allRows.length} response${allRows.length !== 1 ? 's' : ''} will be saved):`, defaultName);
+  if (name === null) return;
+  if (!window.confirm(`Archive "${name}" and start a brand-new empty poll?`)) return;
+
+  try {
+    const closeRes = await fetch(`${SUPABASE_URL}/rest/v1/polls?id=eq.${current.id}`, {
+      method: 'PATCH',
+      headers: { ...hdrs, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ name, closed_at: new Date().toISOString() })
+    });
+    if (!closeRes.ok) throw new Error(`HTTP ${closeRes.status}`);
+
+    const newRes = await fetch(`${SUPABASE_URL}/rest/v1/polls`, {
+      method: 'POST',
+      headers: { ...hdrs, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ name: `New poll — ${new Date().toLocaleDateString()}` })
+    });
+    if (!newRes.ok) throw new Error(`HTTP ${newRes.status}`);
+
+    viewingPollId = null;
+    await loadData();
+  } catch(e) {
+    alert(`Something went wrong: ${e.message}`);
   }
 }
 
@@ -382,12 +469,15 @@ function findWinner(counts, total) {
 }
 
 function render() {
+  renderPollSelect();
   const rows = activeRows();
   const total = rows.length;
   const isFiltered = activeFilter.size > 0;
+  const vp = viewingPoll();
+  const pollLabel = vp ? `${vp.name || 'Untitled poll'}${!vp.closed_at ? ' (active)' : ''}` : '';
 
   document.getElementById('subtitle').textContent =
-    `${allRows.length} response${allRows.length !== 1 ? 's' : ''}${isFiltered ? ` · Showing ${total} of ${allRows.length}` : ''} · Updated ${new Date().toLocaleTimeString()}`;
+    `${pollLabel} · ${allRows.length} response${allRows.length !== 1 ? 's' : ''}${isFiltered ? ` · Showing ${total} of ${allRows.length}` : ''} · Updated ${new Date().toLocaleTimeString()}`;
 
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Responses</div><div class="stat-value">${allRows.length}</div></div>
@@ -443,8 +533,9 @@ function render() {
       const isActive = activeFilter.has(r.name);
       return `<div class="respondent-card${isActive ? ' active' : ''}" onclick="toggleFilter('${r.name.replace(/'/g, "\\'")}')">
         <div class="resp-dot"></div>
-        <div>
-          <div class="resp-name">${r.name}</div>
+        <div style="min-width:0">
+          <div class="resp-name">${escHtml(r.name)}</div>
+          ${r.email ? `<div class="resp-email">${escHtml(r.email)}</div>` : ''}
           <div class="resp-date">${when}</div>
         </div>
       </div>`;
@@ -471,6 +562,13 @@ function resetFilter() {
 
 function renderMissing() {
   const el = document.getElementById('missing-section');
+  const vp = viewingPoll();
+  const isActive = !!vp && !vp.closed_at;
+
+  if (!isActive) {
+    el.innerHTML = `<div class="poll-closed-note">This poll is closed — invite actions are only available for the active poll.</div>`;
+    return;
+  }
   if (!allMatches || !allMatches.length) {
     el.innerHTML = '<div class="no-data">No member matches set up yet. <a href="match.html" style="color:var(--accent)">Set up matches →</a></div>';
     return;

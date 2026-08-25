@@ -251,6 +251,11 @@
       <input type="text" id="name-input" placeholder="First name is fine" autocomplete="off" />
     </div>
 
+    <div class="name-section">
+      <label for="email-input">Your email</label>
+      <input type="email" id="email-input" placeholder="you@example.com" autocomplete="email" required />
+    </div>
+
     <div class="legend">
       <div class="legend-item"><div class="legend-dot" style="background:#95D5A8"></div> Always free</div>
       <div class="legend-item"><div class="legend-dot" style="background:#FFCC7A"></div> Sometimes free</div>
@@ -269,7 +274,7 @@
   <div class="success-screen" id="success-screen">
     <span class="checkmark">✓</span>
     <h2>Thanks, you're in.</h2>
-    <p>Your availability has been recorded.<br>We'll be in touch once everyone has responded.</p>
+    <p>Your availability has been recorded.<br>We'll be in touch once everyone has responded.<br>Need to change an answer? Just resubmit this form with the same email.</p>
   </div>
 
 </div>
@@ -277,6 +282,17 @@
 <script>
 const SUPABASE_URL = 'https://eqpqtswfkfmukzuhenjt.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcHF0c3dma2ZtdWt6dWhlbmp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1OTgwNzUsImV4cCI6MjA5NDE3NDA3NX0.jk1dbvSxwoSiOFFA7CeNJbJItXmJeDebU2D9rGtfvVA';
+
+let ACTIVE_POLL_ID = null;
+const pollReady = (async () => {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/polls?select=id&closed_at=is.null&order=created_at.desc&limit=1`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+    });
+    const rows = await res.json();
+    ACTIVE_POLL_ID = rows[0]?.id || null;
+  } catch(e) { ACTIVE_POLL_ID = null; }
+})();
 
 function getTZOffset(tz) {
   const now = new Date();
@@ -395,12 +411,16 @@ function setDay(dayId, val) {
   day.slots.forEach(slotId => select(windowId(dayId, slotId), val));
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 document.getElementById('submit-btn').addEventListener('click', async () => {
   const name = document.getElementById('name-input').value.trim();
+  const email = document.getElementById('email-input').value.trim().toLowerCase();
   const errEl = document.getElementById('error-msg');
   errEl.textContent = '';
 
   if (!name) { errEl.textContent = 'Please enter your name before submitting.'; return; }
+  if (!EMAIL_RE.test(email)) { errEl.textContent = 'Please enter a valid email address.'; return; }
 
   const answered = Object.values(state).filter(v => v !== null).length;
   if (answered === 0) { errEl.textContent = 'Please fill in at least one time window.'; return; }
@@ -409,16 +429,24 @@ document.getElementById('submit-btn').addEventListener('click', async () => {
   btn.disabled = true;
   btn.textContent = 'Submitting…';
 
+  await pollReady;
+  if (!ACTIVE_POLL_ID) {
+    errEl.textContent = 'This poll is not currently open. Please check back later.';
+    btn.disabled = false;
+    btn.textContent = 'Submit my availability';
+    return;
+  }
+
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/responses`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/responses?on_conflict=poll_id,email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Prefer': 'return=minimal'
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
       },
-      body: JSON.stringify({ name, availability: state })
+      body: JSON.stringify({ name, email, availability: state, poll_id: ACTIVE_POLL_ID })
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     document.getElementById('form-view').style.display = 'none';

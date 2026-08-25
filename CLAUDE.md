@@ -22,7 +22,8 @@ All three files are self-contained (no build step, no dependencies beyond Google
 - **Table:** `polls` — columns: `id` (uuid pk), `name` (text), `created_at` (timestamptz), `closed_at` (timestamptz, null = active poll). Exactly one poll should have `closed_at IS NULL` at a time.
 - **Table:** `responses` — columns: `name` (text), `email` (text — identity key; nullable at the DB level for pre-existing rows, but required on the form), `availability` (jsonb), `submitted_at` (timestamptz), `poll_id` (uuid fk → `polls.id`). Unique on `(poll_id, email)`. index.html looks up the active poll's id on load, tags submissions with it, and upserts on `(poll_id, email)` — resubmitting with the same email edits your existing answer instead of creating a duplicate.
 - **Table:** `member_matches` — columns: `groups_io_email`, `groups_io_name`, `respondent_name`. Not poll-scoped.
-- **Auth:** anon key only; RLS should allow public insert/select on `responses` and `polls`, public update on `polls` (for closing a poll), and public insert/select on `member_matches`
+- **Auth:** anon key only; RLS allows public insert/select/update on `responses` (update is required for the email-upsert edit flow), public insert/select on `polls`, public update on `polls` (for closing a poll), and public insert/select on `member_matches`
+- **Direct DB access:** `db.eqpqtswfkfmukzuhenjt.supabase.co:5432` is IPv6-only and unreachable from dev-mac's network. For running SQL directly (vs. the dashboard SQL editor), use the pooler: `postgresql://postgres.eqpqtswfkfmukzuhenjt@aws-1-us-west-2.pooler.supabase.com:6543/postgres` with the DB password via `PGPASSWORD`. No GitHub-linked migrations workflow exists yet — schema changes are ad hoc (dashboard SQL editor or direct psql). Considered setting one up 2026-08-25, deferred in favor of just running things directly.
 
 ## Poll lifecycle
 
@@ -63,6 +64,7 @@ Days: Sun–Thu (all 4 slots), Fri (morning + early_aftn only).
 - Groups.io member matching (match.html) to track who on the mailing list hasn't responded yet
 - Poll lifecycle: `polls` table, active-poll lookup on submit, "Save & start new poll" flow, poll picker on results.html for browsing past rounds
 - Email as respondent identity: `responses.email`, unique per `(poll_id, email)`, submit upserts on that key — duplicate prevention and edit/update-response solved together by resubmitting with the same email
+- "← Back to poll" link on results.html, next to the poll picker
 
 ## Possible next steps
 
@@ -72,3 +74,4 @@ Days: Sun–Thu (all 4 slots), Fri (morning + early_aftn only).
 - **Reminder emails:** now that respondents supply their own email, send nudges to people who haven't answered the active poll
 - **"Email the group" tool:** compose/send to all current respondents (or all matched members) directly from results.html
 - **match.html could auto-match by email:** respondents now supply email directly, which could replace (or supplement) the manual drag-and-drop name-to-Groups.io-member matching with a direct email match
+- **GitHub-linked Supabase migrations:** deferred 2026-08-25 in favor of running SQL directly; worth revisiting if the SaaS direction firms up and schema changes get more frequent

@@ -20,7 +20,7 @@ All three files are self-contained (no build step, no dependencies beyond Google
 
 - **Supabase project:** https://eqpqtswfkfmukzuhenjt.supabase.co
 - **Table:** `polls` — columns: `id` (uuid pk), `name` (text), `created_at` (timestamptz), `closed_at` (timestamptz, null = active poll). Exactly one poll should have `closed_at IS NULL` at a time.
-- **Table:** `responses` — columns: `name` (text), `email` (text — identity key; nullable at the DB level for pre-existing rows, but required on the form), `availability` (jsonb), `submitted_at` (timestamptz), `poll_id` (uuid fk → `polls.id`). Unique on `(poll_id, email)`. index.html looks up the active poll's id on load, tags submissions with it, and upserts on `(poll_id, email)` — resubmitting with the same email edits your existing answer instead of creating a duplicate.
+- **Table:** `responses` — columns: `name` (text), `email` (text — identity key; nullable at the DB level for pre-existing rows, but required on the form), `availability` (jsonb), `top_picks` (text[] of slot keys like `wed_early_aftn`, 1–3 required on the form; null on rows from before 2026-09-30), `submitted_at` (timestamptz), `poll_id` (uuid fk → `polls.id`). Unique on `(poll_id, email)`. index.html looks up the active poll's id on load, tags submissions with it, and upserts on `(poll_id, email)` — resubmitting with the same email edits your existing answer instead of creating a duplicate.
 - **Table:** `member_matches` — columns: `groups_io_email`, `groups_io_name`, `respondent_name`. Not poll-scoped.
 - **Auth:** anon key only; RLS allows public insert/select/update on `responses` (update is required for the email-upsert edit flow), public insert/select on `polls`, public update on `polls` (for closing a poll), and public insert/select on `member_matches`
 - **Direct DB access:** `db.eqpqtswfkfmukzuhenjt.supabase.co:5432` is IPv6-only and unreachable from dev-mac's network. For running SQL directly (vs. the dashboard SQL editor), use the pooler: `postgresql://postgres.eqpqtswfkfmukzuhenjt@aws-1-us-west-2.pooler.supabase.com:6543/postgres` with the DB password via `PGPASSWORD`. No GitHub-linked migrations workflow exists yet — schema changes are ad hoc (dashboard SQL editor or direct psql). Considered setting one up 2026-08-25, deferred in favor of just running things directly.
@@ -54,6 +54,8 @@ Days: Sun–Thu (all 4 slots), Fri (morning + early_aftn only).
 - <40% → red (low)
 - No responses → gray
 
+**Winner (outlined cell):** among slots within 10 points (`TIE_BAND`) of the top score, the one with the most ★ top picks wins; score breaks star ties. Top picks exist because most respondents answer "Sometimes" to nearly everything, which clustered weekday slots within a few points and no clear winner emerged. Stars can only go on Always/Sometimes slots. Entering an email that already responded to the active poll reloads that person's previous answers into the form.
+
 ## What's been done
 
 - Initial form + success screen
@@ -65,6 +67,7 @@ Days: Sun–Thu (all 4 slots), Fri (morning + early_aftn only).
 - Poll lifecycle: `polls` table, active-poll lookup on submit, "Save & start new poll" flow, poll picker on results.html for browsing past rounds
 - Email as respondent identity: `responses.email`, unique per `(poll_id, email)`, submit upserts on that key — duplicate prevention and edit/update-response solved together by resubmitting with the same email
 - "← Back to poll" link on results.html, next to the poll picker
+- ★ Top picks (1–3 per respondent) as the tie-breaker for the winning slot; form reloads previous answers by email so earlier respondents can add stars
 
 ## Possible next steps
 

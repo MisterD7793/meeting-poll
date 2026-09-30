@@ -24,6 +24,9 @@
     --unset: #E9E5DF;
     --unset-border: #CEC8BF;
     --accent: #2C4A7C;
+    --pick: #8A6500;
+    --pick-bg: #FFF4C2;
+    --pick-border: #E8C547;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -187,6 +190,36 @@
   .opt.sometimes{ background: var(--sometimes-bg); border-color: var(--sometimes-border); color: var(--sometimes); }
   .opt.never    { background: var(--never-bg);     border-color: var(--never-border);     color: var(--never); }
 
+  .star {
+    flex: 0 0 40px;
+    border-radius: 7px;
+    border: 1px solid var(--unset-border);
+    background: var(--unset);
+    font-size: 17px;
+    line-height: 1;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .star:hover:not(:disabled) { border-color: var(--pick-border); color: var(--pick); }
+  .star.on { background: var(--pick-bg); border-color: var(--pick-border); color: var(--pick); }
+  .star:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .picks-counter {
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 0.75rem;
+  }
+  .picks-counter strong { color: var(--pick); }
+
+  .prefill-note {
+    display: none;
+    margin-top: 0.6rem;
+    font-size: 13px;
+    color: var(--always);
+  }
+
   @media (max-width: 540px) {
     .slot { flex-direction: column; align-items: stretch; gap: 0.4rem; }
     .slot-label { width: auto; }
@@ -244,6 +277,7 @@
     <header>
       <h1>When can you meet?</h1>
       <p>Mark each time window as <strong>Always</strong>, <strong>Sometimes</strong>, or <strong>Never</strong> available for a recurring weekly meeting. Leave blank if you're unsure.</p>
+      <p style="margin-top:0.5rem">Then tap <strong>☆</strong> on the 1–3 slots you'd <strong>most prefer</strong> — these break ties between similar slots.</p>
     </header>
 
     <div class="name-section">
@@ -254,6 +288,7 @@
     <div class="name-section">
       <label for="email-input">Your email</label>
       <input type="email" id="email-input" placeholder="you@example.com" autocomplete="email" required />
+      <div class="prefill-note" id="prefill-note">Welcome back — we loaded your previous answers. Add your top picks, change anything you like, and resubmit.</div>
     </div>
 
     <div class="legend">
@@ -261,11 +296,13 @@
       <div class="legend-item"><div class="legend-dot" style="background:#FFCC7A"></div> Sometimes free</div>
       <div class="legend-item"><div class="legend-dot" style="background:#F9AAAA"></div> Never free</div>
       <div class="legend-item"><div class="legend-dot" style="background:#CEC8BF"></div> Not answered</div>
+      <div class="legend-item"><span style="color:var(--pick)">★</span> Top pick (1–3)</div>
     </div>
 
     <div id="days-container"></div>
 
     <div class="submit-section">
+      <div class="picks-counter" id="picks-counter"></div>
       <button class="submit-btn" id="submit-btn">Submit my availability</button>
       <div class="error-msg" id="error-msg"></div>
     </div>
@@ -345,7 +382,9 @@ const DAYS = [
 ];
 
 const OPTIONS = ['always','sometimes','never'];
+const MAX_PICKS = 3;
 const state = {};
+let picks = new Set();
 
 function windowId(dayId, slotId) { return `${dayId}_${slotId}`; }
 
@@ -381,6 +420,7 @@ function buildForm() {
         </div>
         <div class="options" id="opts-${wid}">
           ${OPTIONS.map(o => `<button class="opt" data-wid="${wid}" data-val="${o}" onclick="select('${wid}','${o}')">${capitalize(o)}</button>`).join('')}
+          <button class="star" id="star-${wid}" title="Top pick" onclick="togglePick('${wid}')">☆</button>
         </div>`;
       slots.appendChild(row);
     });
@@ -393,12 +433,13 @@ function buildForm() {
 function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 function select(wid, val) {
-  if (state[wid] === val) {
-    state[wid] = null;
-    val = null;
-  } else {
-    state[wid] = val;
-  }
+  setValue(wid, state[wid] === val ? null : val);
+  renderPicks();
+}
+
+function setValue(wid, val) {
+  state[wid] = val;
+  if (val !== 'always' && val !== 'sometimes') picks.delete(wid);
   const opts = document.querySelectorAll(`#opts-${wid} .opt`);
   opts.forEach(btn => {
     btn.classList.remove('always','sometimes','never');
@@ -406,9 +447,53 @@ function select(wid, val) {
   });
 }
 
+function togglePick(wid) {
+  if (picks.has(wid)) {
+    picks.delete(wid);
+  } else if (picks.size < MAX_PICKS && state[wid] !== 'never') {
+    if (!state[wid]) setValue(wid, 'always');
+    picks.add(wid);
+  }
+  renderPicks();
+}
+
+function renderPicks() {
+  Object.keys(state).forEach(wid => {
+    const btn = document.getElementById(`star-${wid}`);
+    const on = picks.has(wid);
+    btn.classList.toggle('on', on);
+    btn.textContent = on ? '★' : '☆';
+    btn.disabled = !on && (state[wid] === 'never' || picks.size >= MAX_PICKS);
+  });
+  document.getElementById('picks-counter').innerHTML =
+    `Top picks: <strong>${picks.size}</strong> of ${MAX_PICKS}`;
+}
+
+async function loadExisting() {
+  const email = document.getElementById('email-input').value.trim().toLowerCase();
+  if (!EMAIL_RE.test(email)) return;
+  if (Object.values(state).some(v => v !== null)) return;
+  await pollReady;
+  if (!ACTIVE_POLL_ID) return;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/responses?select=name,availability,top_picks&poll_id=eq.${ACTIVE_POLL_ID}&email=eq.${encodeURIComponent(email)}`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+    });
+    const [row] = await res.json();
+    if (!row) return;
+    const nameInput = document.getElementById('name-input');
+    if (!nameInput.value.trim()) nameInput.value = row.name;
+    Object.keys(state).forEach(wid => setValue(wid, (row.availability || {})[wid] || null));
+    picks = new Set((row.top_picks || []).filter(wid => state[wid] === 'always' || state[wid] === 'sometimes'));
+    renderPicks();
+    document.getElementById('prefill-note').style.display = 'block';
+  } catch(e) {}
+}
+
 function setDay(dayId, val) {
   const day = DAYS.find(d => d.id === dayId);
-  day.slots.forEach(slotId => select(windowId(dayId, slotId), val));
+  day.slots.forEach(slotId => setValue(windowId(dayId, slotId), val));
+  renderPicks();
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -424,6 +509,7 @@ document.getElementById('submit-btn').addEventListener('click', async () => {
 
   const answered = Object.values(state).filter(v => v !== null).length;
   if (answered === 0) { errEl.textContent = 'Please fill in at least one time window.'; return; }
+  if (picks.size === 0) { errEl.textContent = 'Please tap ☆ on at least one slot you\'d most prefer (up to 3).'; return; }
 
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
@@ -446,7 +532,7 @@ document.getElementById('submit-btn').addEventListener('click', async () => {
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'Prefer': 'resolution=merge-duplicates,return=minimal'
       },
-      body: JSON.stringify({ name, email, availability: state, poll_id: ACTIVE_POLL_ID })
+      body: JSON.stringify({ name, email, availability: state, top_picks: [...picks], poll_id: ACTIVE_POLL_ID })
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     document.getElementById('form-view').style.display = 'none';
@@ -459,6 +545,8 @@ document.getElementById('submit-btn').addEventListener('click', async () => {
 });
 
 buildForm();
+renderPicks();
+document.getElementById('email-input').addEventListener('change', loadExisting);
 </script>
 </body>
 </html>

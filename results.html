@@ -130,6 +130,7 @@
   .cell.zero .cell-score  { color: var(--muted); }
   .cell.na .cell-score    { color: var(--border); font-size: 18px; }
   .cell-counts { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.4; text-align: center; }
+  .cell-stars  { font-size: 11px; font-weight: 500; color: #8A6500; margin-top: 2px; line-height: 1; }
 
   /* Popup */
   .popup-overlay {
@@ -163,6 +164,8 @@
   .lbl-sometimes { background: var(--sometimes-bg); color: var(--sometimes); }
   .lbl-never     { background: var(--never-bg);     color: var(--never); }
   .lbl-blank     { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+  .lbl-pick      { background: #FFF4C2; color: #8A6500; }
+  .resp-nopick   { font-size: 11px; color: #8A6500; }
   .popup-names { display: flex; flex-wrap: wrap; gap: 6px; }
   .name-chip { font-size: 13px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
 
@@ -309,6 +312,7 @@ const DAYS = [
   { id: 'fri', label: 'Friday' },
 ];
 const FRI_SLOTS = ['morning', 'early_aftn'];
+const TIE_BAND = 10;
 
 const hdrs = {
   'apikey': SUPABASE_ANON_KEY,
@@ -442,8 +446,8 @@ function tally(rows) {
     const slots = day.id === 'fri' ? FRI_SLOTS : SLOTS.map(s => s.id);
     slots.forEach(sid => {
       const k = wid(day.id, sid);
-      counts[k] = { always: 0, sometimes: 0, never: 0, blank: 0 };
-      names[k]  = { always: [], sometimes: [], never: [], blank: [] };
+      counts[k] = { always: 0, sometimes: 0, never: 0, blank: 0, stars: 0 };
+      names[k]  = { always: [], sometimes: [], never: [], blank: [], stars: [] };
     });
   });
   rows.forEach(row => {
@@ -454,18 +458,22 @@ function tally(rows) {
       counts[k][bucket]++;
       names[k][bucket].push(row.name);
     });
+    (row.top_picks || []).forEach(k => {
+      if (!counts[k]) return;
+      counts[k].stars++;
+      names[k].stars.push(row.name);
+    });
   });
   return { counts, names };
 }
 
 function findWinner(counts, total) {
   if (!total) return null;
-  let best = null, bestScore = -1;
-  Object.entries(counts).forEach(([k, c]) => {
-    const s = calcScore(c, total);
-    if (s > bestScore) { bestScore = s; best = k; }
-  });
-  return best;
+  const scored = Object.entries(counts).map(([k, c]) => ({ k, s: calcScore(c, total), stars: c.stars }));
+  const top = Math.max(...scored.map(x => x.s));
+  const contenders = scored.filter(x => x.s >= top - TIE_BAND);
+  contenders.sort((a, b) => b.stars - a.stars || b.s - a.s);
+  return contenders[0].k;
 }
 
 function render() {
@@ -482,7 +490,7 @@ function render() {
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Responses</div><div class="stat-value">${allRows.length}</div></div>
     <div class="stat-card"><div class="stat-label">Windows</div><div class="stat-value">22</div></div>
-    <div class="stat-card"><div class="stat-label">${isFiltered ? 'Viewing' : 'Scoring'}</div><div class="stat-value" style="font-size:13px;padding-top:6px">${isFiltered ? `${activeFilter.size} selected` : 'Always=2 · Sometimes=1'}</div></div>
+    <div class="stat-card"><div class="stat-label">${isFiltered ? 'Viewing' : 'Scoring'}</div><div class="stat-value" style="font-size:13px;padding-top:6px">${isFiltered ? `${activeFilter.size} selected` : `Always=2 · Sometimes=1 · ★ breaks ties within ${TIE_BAND} pts`}</div></div>
   `;
 
   // Show/hide clear button
@@ -516,6 +524,7 @@ function render() {
       return `<td><div class="cell ${cls}${isWinner ? ' winner' : ''}" onclick="openPopup('${k}')">
         <div class="cell-score">${scoreStr}</div>
         <div class="cell-counts">${countStr}</div>
+        ${c.stars ? `<div class="cell-stars">★${c.stars}</div>` : ''}
       </div></td>`;
     }).join('');
     return `<tr><td>${slot.name}<span>${slot.time}</span></td>${cells}</tr>`;
@@ -528,6 +537,7 @@ function render() {
   if (!allRows.length) {
     respEl.innerHTML = '<div class="no-data">No responses yet.</div>';
   } else {
+    const showNoPick = !!vp && !vp.closed_at;
     respEl.innerHTML = allRows.map(r => {
       const when = new Date(r.submitted_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
       const isActive = activeFilter.has(r.name);
@@ -537,6 +547,7 @@ function render() {
           <div class="resp-name">${escHtml(r.name)}</div>
           ${r.email ? `<div class="resp-email">${escHtml(r.email)}</div>` : ''}
           <div class="resp-date">${when}</div>
+          ${showNoPick && !(r.top_picks || []).length ? '<div class="resp-nopick">No top picks yet</div>' : ''}
         </div>
       </div>`;
     }).join('');
@@ -620,12 +631,13 @@ function copyEmails() {
 function openPopup(k) {
   const rows = activeRows();
   const total = rows.length;
-  const c = { always: 0, sometimes: 0, never: 0, blank: 0 };
-  const n = { always: [], sometimes: [], never: [], blank: [] };
+  const c = { always: 0, sometimes: 0, never: 0, blank: 0, stars: 0 };
+  const n = { always: [], sometimes: [], never: [], blank: [], stars: [] };
   rows.forEach(row => {
     const v = (row.availability || {})[k];
     const bucket = (v === 'always' || v === 'sometimes' || v === 'never') ? v : 'blank';
     c[bucket]++; n[bucket].push(row.name);
+    if ((row.top_picks || []).includes(k)) { c.stars++; n.stars.push(row.name); }
   });
   const idx = k.indexOf('_');
   const day  = DAYS.find(d => d.id === k.substring(0, idx));
@@ -635,7 +647,7 @@ function openPopup(k) {
 
   document.getElementById('popup-title').textContent = `${day.label} · ${slot.name}`;
   document.getElementById('popup-subtitle').textContent =
-    `${slot.time} · Score: ${s}%${activeFilter.size ? ` · ${activeFilter.size} selected` : ''}`;
+    `${slot.time} · Score: ${s}%${c.stars ? ` · ★${c.stars}` : ''}${activeFilter.size ? ` · ${activeFilter.size} selected` : ''}`;
 
   const ap = total ? c.always/total*100 : 0;
   const sp = total ? c.sometimes/total*100 : 0;
@@ -648,6 +660,7 @@ function openPopup(k) {
     <div class="psb-blank"     style="flex:${bp}"></div>`;
 
   document.getElementById('popup-body').innerHTML = [
+    { key: 'stars',     label: '★ Top pick', cls: 'lbl-pick' },
     { key: 'always',    label: 'Always',    cls: 'lbl-always' },
     { key: 'sometimes', label: 'Sometimes', cls: 'lbl-sometimes' },
     { key: 'never',     label: 'Never',     cls: 'lbl-never' },

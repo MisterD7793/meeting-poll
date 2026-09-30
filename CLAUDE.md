@@ -71,6 +71,7 @@ Days: Sun–Thu (all 4 slots), Fri (morning + early_aftn only).
 
 ## Possible next steps
 
+- **Runoff poll:** if ★ top picks still don't separate the leading slots, start a follow-up poll limited to the top 3–4 slots (would need a per-poll slot list; the `polls` table has none today)
 - **results.html timezone:** the dashboard shows raw ET times; consider converting to viewer's local TZ for consistency
 - **Admin controls:** delete a response from the dashboard
 - **Multi-tenant / SaaS direction:** the poll-scoped schema (`polls` + `poll_id`) was chosen with this in mind — a future `account_id`/owner concept could scope polls to a customer

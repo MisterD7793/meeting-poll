@@ -12,15 +12,23 @@
     --border: #E2DDD6;
     --text: #1A1714;
     --muted: #7A736B;
-    --always: #2D6A4F;
-    --always-bg: #D8F3DC;
-    --always-border: #95D5A8;
-    --sometimes: #B5700A;
-    --sometimes-bg: #FFF0D6;
-    --sometimes-border: #FFCC7A;
-    --never: #9B2C2C;
-    --never-bg: #FDE8E8;
-    --never-border: #F9AAAA;
+    /* Blue / yellow / striped orange: distinguishable under red-green color blindness, and in grayscale by lightness + stripes */
+    --always: #1D5FA6;
+    --always-bg: #DCE8F6;
+    --always-border: #8DB3E0;
+    --always-fill: #1D5FA6;
+    --always-ink: #FFFFFF;
+    --sometimes: #7A5200;
+    --sometimes-bg: #FDF0C4;
+    --sometimes-border: #E0B43A;
+    --sometimes-fill: #F3C64A;
+    --sometimes-ink: #3D2A00;
+    --never: #A8420C;
+    --never-bg: #FBE1D0;
+    --never-border: #E9A57A;
+    --never-fill: #E07B28;
+    --never-stripes: repeating-linear-gradient(135deg, #E07B28 0 6px, #CC6818 6px 12px);
+    --never-ink: #2B0F00;
     --unset: #E9E5DF;
     --unset-border: #CEC8BF;
     --accent: #2C4A7C;
@@ -101,10 +109,16 @@
     color: var(--muted);
   }
   .legend-dot {
-    width: 12px; height: 12px;
-    border-radius: 3px;
+    width: 20px; height: 20px;
+    border-radius: 4px;
     flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
   }
+  .legend-dot.always    { background: var(--always-fill);    color: var(--always-ink); }
+  .legend-dot.sometimes { background: var(--sometimes-fill); color: var(--sometimes-ink); }
+  .legend-dot.never     { background: var(--never-stripes);  color: var(--never-ink); }
+  .legend-dot.unset     { background: var(--unset); border: 1px solid var(--unset-border); }
 
   .day-block {
     background: var(--surface);
@@ -186,9 +200,11 @@
   }
   .opt:hover { border-color: var(--accent); color: var(--accent); }
 
-  .opt.always   { background: var(--always-bg);    border-color: var(--always-border);    color: var(--always); }
-  .opt.sometimes{ background: var(--sometimes-bg); border-color: var(--sometimes-border); color: var(--sometimes); }
-  .opt.never    { background: var(--never-bg);     border-color: var(--never-border);     color: var(--never); }
+  .opt.always, .opt.sometimes, .opt.never { font-weight: 700; border-width: 2px; padding: 6px 5px; }
+  .opt.always   { background: var(--always-fill);    border-color: var(--always);    color: var(--always-ink); }
+  .opt.sometimes{ background: var(--sometimes-fill); border-color: var(--sometimes); color: var(--sometimes-ink); }
+  .opt.never    { background: var(--never-stripes);  border-color: var(--never);     color: var(--never-ink); }
+  .opt.always:hover, .opt.sometimes:hover, .opt.never:hover { border-color: var(--text); }
 
   .star {
     flex: 0 0 40px;
@@ -223,6 +239,7 @@
   @media (max-width: 540px) {
     .slot { flex-direction: column; align-items: stretch; gap: 0.4rem; }
     .slot-label { width: auto; }
+    .opt-icon { display: block; }
   }
 
   .submit-section { margin-top: 2rem; }
@@ -292,10 +309,10 @@
     </div>
 
     <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#95D5A8"></div> Always free</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#FFCC7A"></div> Sometimes free</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#F9AAAA"></div> Never free</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#CEC8BF"></div> Not answered</div>
+      <div class="legend-item"><div class="legend-dot always">✓</div> Always free</div>
+      <div class="legend-item"><div class="legend-dot sometimes">~</div> Sometimes free</div>
+      <div class="legend-item"><div class="legend-dot never">✕</div> Never free</div>
+      <div class="legend-item"><div class="legend-dot unset"></div> Not answered</div>
       <div class="legend-item"><span style="color:var(--pick)">★</span> Top pick (1–3)</div>
     </div>
 
@@ -382,6 +399,7 @@ const DAYS = [
 ];
 
 const OPTIONS = ['always','sometimes','never'];
+const OPTION_ICONS = { always: '✓', sometimes: '~', never: '✕' };
 const MAX_PICKS = 3;
 const state = {};
 let picks = new Set();
@@ -419,7 +437,7 @@ function buildForm() {
           <span class="slot-time">${slot.time}</span>
         </div>
         <div class="options" id="opts-${wid}">
-          ${OPTIONS.map(o => `<button class="opt" data-wid="${wid}" data-val="${o}" onclick="select('${wid}','${o}')">${capitalize(o)}</button>`).join('')}
+          ${OPTIONS.map(o => `<button class="opt" data-wid="${wid}" data-val="${o}" onclick="select('${wid}','${o}')"><span class="opt-icon">${OPTION_ICONS[o]}</span> ${capitalize(o)}</button>`).join('')}
           <button class="star" id="star-${wid}" title="Top pick" onclick="togglePick('${wid}')">☆</button>
         </div>`;
       slots.appendChild(row);

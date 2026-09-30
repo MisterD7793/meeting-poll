@@ -49,10 +49,12 @@ Days: Sun–Thu (all 4 slots), Fri (morning + early_aftn only).
 
 `score = (always×2 + sometimes) / (total×2) × 100`
 
-- ≥70% → green (high)
-- 40–69% → yellow (mid)
-- <40% → red (low)
+- ≥70% → solid blue ▲ (high)
+- 40–69% → yellow ● (mid)
+- <40% → striped orange ▼ (low)
 - No responses → gray
+
+Colors are chosen to be color-blind safe (no red/green): Always/Sometimes/Never use blue / yellow / striped orange with ✓ ~ ✕ symbols across all three pages, so meaning never depends on hue alone. Keep that when adding new status colors.
 
 **Winner (outlined cell):** among slots within 10 points (`TIE_BAND`) of the top score, the one with the most ★ top picks wins; score breaks star ties. Top picks exist because most respondents answer "Sometimes" to nearly everything, which clustered weekday slots within a few points and no clear winner emerged. Stars can only go on Always/Sometimes slots. Entering an email that already responded to the active poll reloads that person's previous answers into the form.
 

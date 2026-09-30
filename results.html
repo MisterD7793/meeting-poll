@@ -12,15 +12,23 @@
     --border: #E2DDD6;
     --text: #1A1714;
     --muted: #7A736B;
-    --always: #2D6A4F;
-    --always-bg: #D8F3DC;
-    --always-border: #95D5A8;
-    --sometimes: #B5700A;
-    --sometimes-bg: #FFF0D6;
-    --sometimes-border: #FFCC7A;
-    --never: #9B2C2C;
-    --never-bg: #FDE8E8;
-    --never-border: #F9AAAA;
+    /* Blue / yellow / striped orange: distinguishable under red-green color blindness, and in grayscale by lightness + stripes */
+    --always: #1D5FA6;
+    --always-bg: #DCE8F6;
+    --always-border: #8DB3E0;
+    --always-fill: #1D5FA6;
+    --always-ink: #FFFFFF;
+    --sometimes: #7A5200;
+    --sometimes-bg: #FDF0C4;
+    --sometimes-border: #E0B43A;
+    --sometimes-fill: #F3C64A;
+    --sometimes-ink: #3D2A00;
+    --never: #A8420C;
+    --never-bg: #FBE1D0;
+    --never-border: #E9A57A;
+    --never-fill: #E07B28;
+    --never-stripes: repeating-linear-gradient(135deg, #E07B28 0 6px, #CC6818 6px 12px);
+    --never-ink: #2B0F00;
     --accent: #2C4A7C;
     --accent-bg: #E8EDF5;
     --accent-border: #A8BFDF;
@@ -90,7 +98,15 @@
   /* Legend */
   .legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; font-size: 12px; color: var(--muted); }
   .legend-item { display: flex; align-items: center; gap: 5px; }
-  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .legend-dot {
+    width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
+  }
+  .legend-dot.high { background: var(--always-fill);    color: var(--always-ink); }
+  .legend-dot.mid  { background: var(--sometimes-fill); color: var(--sometimes-ink); }
+  .legend-dot.low  { background: var(--never-stripes);  color: var(--never-ink); }
+  .legend-dot.none { background: var(--bg); border: 1px solid var(--border); }
+  .legend-dot.best { background: var(--surface); box-shadow: 0 0 0 3px var(--text); }
 
   /* Grid table */
   .grid-wrap {
@@ -117,20 +133,22 @@
   .cell:hover { transform: scale(1.05); }
   .cell.na, .cell.empty { background: var(--bg); border-color: var(--border); cursor: default; }
   .cell.na:hover, .cell.empty:hover { transform: none; }
-  .cell.high   { background: #D8F3DC; border-color: #95D5A8; }
-  .cell.mid    { background: #FFF0D6; border-color: #FFCC7A; }
-  .cell.low    { background: #FDE8E8; border-color: #F9AAAA; }
+  .cell.high   { background: var(--always-fill);    border-color: var(--always);    color: var(--always-ink); }
+  .cell.mid    { background: var(--sometimes-fill); border-color: var(--sometimes); color: var(--sometimes-ink); }
+  .cell.low    { background: var(--never-stripes);  border-color: var(--never);     color: var(--never-ink); }
   .cell.zero   { background: var(--bg); border-color: var(--border); }
-  .cell.winner { box-shadow: 0 0 0 3px #2D6A4F; border-color: #2D6A4F; }
+  .cell.winner { box-shadow: 0 0 0 2px var(--surface), 0 0 0 5px var(--text); }
+  .cell-best {
+    font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--text); color: var(--surface); border-radius: 3px; padding: 1px 5px; margin-bottom: 4px; line-height: 1.3;
+  }
 
   .cell-score { font-size: 16px; font-weight: 500; line-height: 1; }
-  .cell.high .cell-score  { color: #2D6A4F; }
-  .cell.mid .cell-score   { color: #B5700A; }
-  .cell.low .cell-score   { color: #9B2C2C; }
   .cell.zero .cell-score  { color: var(--muted); }
   .cell.na .cell-score    { color: var(--border); font-size: 18px; }
   .cell-counts { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.4; text-align: center; }
-  .cell-stars  { font-size: 11px; font-weight: 500; color: #8A6500; margin-top: 2px; line-height: 1; }
+  .cell.high .cell-counts, .cell.mid .cell-counts, .cell.low .cell-counts { color: inherit; opacity: 0.9; }
+  .cell-stars  { font-size: 11px; font-weight: 700; margin-top: 2px; line-height: 1; }
 
   /* Popup */
   .popup-overlay {
@@ -149,10 +167,10 @@
   .popup-close:hover { background: var(--bg); }
   .popup-title { font-family: 'DM Serif Display', serif; font-size: 1.15rem; font-weight: 400; margin-bottom: 0.2rem; }
   .popup-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
-  .popup-score-bar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 1.25rem; }
-  .psb-always    { background: #52B788; }
-  .psb-sometimes { background: #F4A621; }
-  .psb-never     { background: #E07070; }
+  .popup-score-bar { display: flex; height: 12px; border-radius: 4px; overflow: hidden; margin-bottom: 1.25rem; }
+  .psb-always    { background: var(--always-fill); }
+  .psb-sometimes { background: var(--sometimes-fill); }
+  .psb-never     { background: var(--never-stripes); }
   .psb-blank     { background: var(--border); }
   .popup-group { margin-bottom: 1rem; }
   .popup-group:last-child { margin-bottom: 0; }
@@ -160,9 +178,9 @@
     font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em;
     margin-bottom: 0.5rem; padding: 3px 8px; border-radius: 4px; display: inline-block;
   }
-  .lbl-always    { background: var(--always-bg);    color: var(--always); }
-  .lbl-sometimes { background: var(--sometimes-bg); color: var(--sometimes); }
-  .lbl-never     { background: var(--never-bg);     color: var(--never); }
+  .lbl-always    { background: var(--always-fill);    color: var(--always-ink); }
+  .lbl-sometimes { background: var(--sometimes-fill); color: var(--sometimes-ink); }
+  .lbl-never     { background: var(--never-stripes);  color: var(--never-ink); }
   .lbl-blank     { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
   .lbl-pick      { background: #FFF4C2; color: #8A6500; }
   .resp-nopick   { font-size: 11px; color: #8A6500; }
@@ -178,7 +196,7 @@
   }
   .respondent-card:hover { border-color: var(--accent); }
   .respondent-card.active { border-color: var(--accent); background: var(--accent-bg); }
-  .resp-dot { width: 8px; height: 8px; border-radius: 50%; background: #52B788; flex-shrink: 0; transition: background 0.15s; }
+  .resp-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--always-fill); flex-shrink: 0; transition: background 0.15s; }
   .respondent-card.active .resp-dot { background: var(--accent); }
   .resp-name { font-weight: 500; }
   .respondent-card.active .resp-name { color: var(--accent); }
@@ -198,7 +216,7 @@
     background: var(--never-bg); border: 1px solid var(--never-border); border-radius: 10px;
     padding: 0.65rem 1rem; display: flex; align-items: center; gap: 8px;
   }
-  .missing-dot { width: 8px; height: 8px; border-radius: 50%; background: #E07070; flex-shrink: 0; }
+  .missing-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--never); flex-shrink: 0; }
 
   .action-btn {
     display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
@@ -251,11 +269,11 @@
     <div style="margin-bottom:2.5rem">
       <div class="section-title">Availability grid</div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#95D5A8"></div>≥70% strong</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#FFCC7A"></div>40–69% possible</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#F9AAAA"></div>&lt;40% weak</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#E2DDD6"></div>no data / n/a</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#2D6A4F;border-radius:50%"></div>top slot</div>
+        <div class="legend-item"><div class="legend-dot high">▲</div>≥70% strong</div>
+        <div class="legend-item"><div class="legend-dot mid">●</div>40–69% possible</div>
+        <div class="legend-item"><div class="legend-dot low">▼</div>&lt;40% weak</div>
+        <div class="legend-item"><div class="legend-dot none"></div>no data / n/a</div>
+        <div class="legend-item"><div class="legend-dot best"></div>top slot (marked BEST)</div>
       </div>
       <p style="font-size:12px;color:var(--muted);margin-bottom:0.75rem">Click any cell to see who said what.</p>
       <div class="grid-wrap"><table id="grid-table"></table></div>
@@ -467,6 +485,8 @@ function tally(rows) {
   return { counts, names };
 }
 
+const TIER_ICONS = { high: '▲', mid: '●', low: '▼' };
+
 function findWinner(counts, total) {
   if (!total) return null;
   const scored = Object.entries(counts).map(([k, c]) => ({ k, s: calcScore(c, total), stars: c.stars }));
@@ -515,13 +535,14 @@ function render() {
       const s = calcScore(c, total);
       const cls = cellClass(s, total);
       const isWinner = k === winner && total > 0;
-      const scoreStr = total ? Math.round(s) + '%' : '—';
+      const scoreStr = total ? `${TIER_ICONS[cls] || ''} ${Math.round(s)}%`.trim() : '—';
       const parts = [];
       if (c.always)    parts.push(`${c.always}✓`);
       if (c.sometimes) parts.push(`${c.sometimes}~`);
       if (c.never)     parts.push(`${c.never}✗`);
       const countStr = parts.length ? parts.join(' · ') : (total ? 'none' : '');
       return `<td><div class="cell ${cls}${isWinner ? ' winner' : ''}" onclick="openPopup('${k}')">
+        ${isWinner ? '<div class="cell-best">Best</div>' : ''}
         <div class="cell-score">${scoreStr}</div>
         <div class="cell-counts">${countStr}</div>
         ${c.stars ? `<div class="cell-stars">★${c.stars}</div>` : ''}
@@ -661,9 +682,9 @@ function openPopup(k) {
 
   document.getElementById('popup-body').innerHTML = [
     { key: 'stars',     label: '★ Top pick', cls: 'lbl-pick' },
-    { key: 'always',    label: 'Always',    cls: 'lbl-always' },
-    { key: 'sometimes', label: 'Sometimes', cls: 'lbl-sometimes' },
-    { key: 'never',     label: 'Never',     cls: 'lbl-never' },
+    { key: 'always',    label: '✓ Always',    cls: 'lbl-always' },
+    { key: 'sometimes', label: '~ Sometimes', cls: 'lbl-sometimes' },
+    { key: 'never',     label: '✕ Never',     cls: 'lbl-never' },
     { key: 'blank',     label: 'No answer', cls: 'lbl-blank' },
   ].filter(g => n[g.key].length).map(g =>
     `<div class="popup-group">
